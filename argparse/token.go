@@ -18,7 +18,7 @@ type Token struct {
 
 func (token *Token) possiblyConvertToSemantic() {
 	if len(token.semanticCandidates) == 1 {
-		var semanticType = *token.semanticCandidates[0]
+		var semanticType = token.semanticCandidates[0]
 		token.ttype = semanticType
 		if semanticType.PosModel().Binding == RIGHT {
 			token.boundTo = token.tokens[token.argumentPosition+1]

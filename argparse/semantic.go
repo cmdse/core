@@ -5,23 +5,23 @@ type SemanticTokenType struct {
 	name     string
 }
 
-func (tokenType SemanticTokenType) IsSemantic() bool {
+func (tokenType *SemanticTokenType) IsSemantic() bool {
 	return tokenType.PosModel().IsSemantic
 }
 
-func (tokenType SemanticTokenType) PosModel() *PositionalModel {
+func (tokenType *SemanticTokenType) PosModel() *PositionalModel {
 	return tokenType.posModel
 }
 
-func (tokenType SemanticTokenType) Name() string {
+func (tokenType *SemanticTokenType) Name() string {
 	return tokenType.name
 }
 
-func (tokenType SemanticTokenType) String() string {
+func (tokenType *SemanticTokenType) String() string {
 	return tokenType.name
 }
 
-func (tokenType SemanticTokenType) Equal(comparedTType TokenType) bool {
+func (tokenType *SemanticTokenType) Equal(comparedTType TokenType) bool {
 	return tokenType.Name() == comparedTType.Name()
 }
 

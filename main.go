@@ -1,7 +1,7 @@
 package main
 
 import (
-	"cldse-cli/argparse"
+	"cmdse-cli/argparse"
 	"fmt"
 )
 

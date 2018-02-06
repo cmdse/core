@@ -13,13 +13,13 @@ type testTuple struct {
 var tests = []testTuple{
 	{
 		[]string{"-l", "-p", "--only", "argument"},
-		[]TokenType{POSIX_SHORT_SWITCH, POSIX_SHORT_SWITCH, GNU_SWITCH, OPERAND},
+		[]TokenType{&POSIX_SHORT_SWITCH, &POSIX_SHORT_SWITCH, &GNU_SWITCH, &OPERAND},
 	}, {
 		[]string{"-l", "--po=TOTO_to", "--only", "argument"},
-		[]TokenType{POSIX_SHORT_SWITCH, GNU_EXPLICIT_ASSIGNMENT, GNU_SWITCH, OPERAND},
+		[]TokenType{&POSIX_SHORT_SWITCH, &GNU_EXPLICIT_ASSIGNMENT, &GNU_SWITCH, &OPERAND},
 	}, {
 		[]string{"--po=TOTO_to", "operand", "--only", "argument"},
-		[]TokenType{GNU_EXPLICIT_ASSIGNMENT, OPERAND, GNU_SWITCH, OPERAND},
+		[]TokenType{&GNU_EXPLICIT_ASSIGNMENT, &OPERAND, &GNU_SWITCH, &OPERAND},
 	},
 }
 

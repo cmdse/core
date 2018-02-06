@@ -11,27 +11,27 @@ type ContextFreeTokenType struct {
 	name               string
 }
 
-func (tokenType ContextFreeTokenType) IsSemantic() bool {
+func (tokenType *ContextFreeTokenType) IsSemantic() bool {
 	return tokenType.PosModel().IsSemantic
 }
 
-func (ContextFreeTokenType) PosModel() *PositionalModel {
+func (*ContextFreeTokenType) PosModel() *PositionalModel {
 	return &UNSET
 }
 
-func (tokenType ContextFreeTokenType) Name() string {
+func (tokenType *ContextFreeTokenType) Name() string {
 	return tokenType.name
 }
 
-func (tokenType ContextFreeTokenType) String() string {
+func (tokenType *ContextFreeTokenType) String() string {
 	return tokenType.name
 }
 
-func (tokenType ContextFreeTokenType) Equal(comparedTType TokenType) bool {
+func (tokenType *ContextFreeTokenType) Equal(comparedTType TokenType) bool {
 	return tokenType.Name() == comparedTType.Name()
 }
 
-func (tokenType ContextFreeTokenType) Regexp() (*regexp.Regexp, bool) {
+func (tokenType *ContextFreeTokenType) Regexp() (*regexp.Regexp, bool) {
 	// each regex is tested, so compilable regex can be asserted
 	reg := regexp.MustCompile(tokenType.regexp)
 	isMatchAllRegex := true
