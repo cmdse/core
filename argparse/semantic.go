@@ -21,8 +21,8 @@ func (tokenType SemanticTokenType) String() string {
 	return tokenType.name
 }
 
-func (tokenType SemanticTokenType) Equal(comparedTtype *SemanticTokenType) bool {
-	return tokenType.name == comparedTtype.name
+func (tokenType SemanticTokenType) Equal(comparedTType TokenType) bool {
+	return tokenType.Name() == comparedTType.Name()
 }
 
 var (

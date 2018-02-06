@@ -28,7 +28,7 @@ func compareTokenArrays(tokens TokenList, types []TokenType) (isEqual bool, err 
 		return false, fmt.Errorf("token list and type list are not of the same length")
 	}
 	for i, token := range tokens {
-		ttype := *token.ttype
+		ttype := token.ttype
 		if ttype != types[i] {
 			return false, fmt.Errorf("expected %T '%s' at position %v for token '%s' but found %T '%s'", types[i], types[i], i, token.value, ttype, ttype)
 		}

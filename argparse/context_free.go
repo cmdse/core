@@ -15,7 +15,7 @@ func (tokenType ContextFreeTokenType) IsSemantic() bool {
 	return tokenType.PosModel().IsSemantic
 }
 
-func (tokenType ContextFreeTokenType) PosModel() *PositionalModel {
+func (ContextFreeTokenType) PosModel() *PositionalModel {
 	return &UNSET
 }
 
@@ -27,8 +27,8 @@ func (tokenType ContextFreeTokenType) String() string {
 	return tokenType.name
 }
 
-func (tokenType ContextFreeTokenType) Equal(comparedTtype *ContextFreeTokenType) bool {
-	return tokenType.name == comparedTtype.name
+func (tokenType ContextFreeTokenType) Equal(comparedTType TokenType) bool {
+	return tokenType.Name() == comparedTType.Name()
 }
 
 func (tokenType ContextFreeTokenType) Regexp() (*regexp.Regexp, bool) {

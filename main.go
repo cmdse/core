@@ -1,7 +1,7 @@
 package main
 
 import (
-	"ceparser/argparse"
+	"cldse-cli/argparse"
 	"fmt"
 )
 

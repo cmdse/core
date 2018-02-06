@@ -1,40 +1,5 @@
 package argparse
 
-type Binding int
-
-const (
-	UNKNOWN Binding = iota
-	NONE
-	LEFT
-	RIGHT
-)
-
-func (binding Binding) String() string {
-	switch binding {
-	case UNKNOWN:
-		return "UNKNOWN"
-	case NONE:
-		return "NONE"
-	case LEFT:
-		return "LEFT"
-	case RIGHT:
-		return "RIGHT"
-	default:
-		return ""
-	}
-}
-
-type Bindings []Binding
-
-func (bindings Bindings) Contains(bindingToCheck Binding) bool {
-	for _, binding := range bindings {
-		if binding == bindingToCheck {
-			return true
-		}
-	}
-	return false
-}
-
 type PositionalModel struct {
 	Binding    Binding
 	IsSemantic bool

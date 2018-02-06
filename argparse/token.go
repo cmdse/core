@@ -9,7 +9,7 @@ type predicate func(*SemanticTokenType) bool
 
 type Token struct {
 	argumentPosition   int
-	ttype              *TokenType
+	ttype              TokenType
 	value              string
 	boundTo            *Token
 	tokens             TokenList
@@ -19,8 +19,7 @@ type Token struct {
 func (token *Token) possiblyConvertToSemantic() {
 	if len(token.semanticCandidates) == 1 {
 		var semanticType = *token.semanticCandidates[0]
-		var tokenType TokenType = semanticType
-		token.ttype = &tokenType
+		token.ttype = semanticType
 		if semanticType.PosModel().Binding == RIGHT {
 			token.boundTo = token.tokens[token.argumentPosition+1]
 		}
@@ -48,7 +47,7 @@ func (token *Token) setCandidate(tokenType *SemanticTokenType) {
 }
 
 func (token *Token) IsBoundTo(binding Binding) bool {
-	ttype := *token.ttype
+	ttype := token.ttype
 	if ttype.PosModel().Equal(&UNSET) {
 		isBound := true
 		for _, semToken := range token.semanticCandidates {
@@ -64,7 +63,7 @@ func (token *Token) IsBoundTo(binding Binding) bool {
 }
 
 func (token *Token) IsBoundToOneOf(bindings Bindings) bool {
-	ttype := *token.ttype
+	ttype := token.ttype
 	if ttype.PosModel().Equal(&UNSET) {
 		isBound := false
 		for _, semToken := range token.semanticCandidates {
@@ -82,7 +81,7 @@ func (token *Token) IsBoundToOneOf(bindings Bindings) bool {
 }
 
 func (token *Token) IsOption() bool {
-	ttype := *token.ttype
+	ttype := token.ttype
 	if ttype.PosModel().Equal(&UNSET) {
 		isOption := false
 		for _, semToken := range token.semanticCandidates {
@@ -100,14 +99,13 @@ func (token *Token) IsOption() bool {
 }
 
 func (token *Token) IsSemantic() bool {
-	ttype := *token.ttype
-	return ttype.IsSemantic()
+	return token.ttype.IsSemantic()
 }
 
 func (token *Token) InferLeft() {
 	position := token.argumentPosition
-	switch (*token.ttype).(type) {
-	case ContextFreeTokenType:
+	switch token.ttype.(type) {
+	case *ContextFreeTokenType:
 		if position > 0 {
 			leftNeighbour := token.tokens[position-1]
 			nbrBoundToLeftOrNone := leftNeighbour.IsBoundToOneOf(Bindings{NONE, LEFT})
@@ -128,14 +126,13 @@ func (token *Token) InferLeft() {
 				})
 			}
 		}
-	case SemanticTokenType:
 	}
 }
 
 func (token *Token) InferRight() {
 	position := token.argumentPosition
-	switch (*token.ttype).(type) {
-	case ContextFreeTokenType:
+	switch token.ttype.(type) {
+	case *ContextFreeTokenType:
 		if token.IsOption() && position < len(token.tokens)+1 {
 			rightNeighbour := token.tokens[position+1]
 			nbrBoundToRightOrNone := rightNeighbour.IsBoundToOneOf(Bindings{NONE, RIGHT})
@@ -147,7 +144,6 @@ func (token *Token) InferRight() {
 			}
 
 		}
-	case SemanticTokenType:
 	}
 }
 
@@ -171,5 +167,5 @@ func (token *Token) String() string {
 	value:'%v',
 	boundTo:%v,
 	semCandidates:[%v]
-}`, token.argumentPosition, *token.ttype, token.value, token.boundTo, strings.Join(semCandidateNames, ", "))
+}`, token.argumentPosition, token.ttype, token.value, token.boundTo, strings.Join(semCandidateNames, ", "))
 }

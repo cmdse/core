@@ -5,10 +5,10 @@ import "testing"
 func TestToken_IsBoundToOneOfCF(t *testing.T) {
 	// Test with a context-free type
 	var tokens = TokenList{}
-	var tokenType TokenType = ONE_DASH_WORD
+	var tokenType TokenType = &ONE_DASH_WORD
 	token := Token{
 		argumentPosition:   0,
-		ttype:              &tokenType,
+		ttype:              tokenType,
 		tokens:             tokens,
 		semanticCandidates: ONE_DASH_WORD.SemanticCandidates,
 		boundTo:            nil,
@@ -33,10 +33,10 @@ func TestToken_IsBoundToOneOfCF(t *testing.T) {
 func TestToken_IsBoundToOneOfSem(t *testing.T) {
 	// test with a semantic token
 	var tokens = TokenList{}
-	var tokenType TokenType = X2LKT_SWITCH
+	var tokenType TokenType = &X2LKT_SWITCH
 	token := Token{
 		argumentPosition:   0,
-		ttype:              &tokenType,
+		ttype:              tokenType,
 		tokens:             tokens,
 		semanticCandidates: []*SemanticTokenType{},
 		boundTo:            nil,
@@ -55,10 +55,10 @@ func TestToken_IsBoundToOneOfSem(t *testing.T) {
 
 func TestToken_IsBoundToSem(t *testing.T) {
 	var tokens = TokenList{}
-	var tokenType TokenType = X2LKT_SWITCH
+	var tokenType TokenType = &X2LKT_SWITCH
 	token := Token{
 		argumentPosition:   0,
-		ttype:              &tokenType,
+		ttype:              tokenType,
 		tokens:             tokens,
 		semanticCandidates: []*SemanticTokenType{},
 		boundTo:            nil,
@@ -77,10 +77,10 @@ func TestToken_IsBoundToSem(t *testing.T) {
 
 func TestToken_IsBoundToCF(t *testing.T) {
 	var tokens = TokenList{}
-	var tokenType TokenType = CF_END_OF_OPTIONS
+	var tokenType TokenType = &CF_END_OF_OPTIONS
 	token := Token{
 		argumentPosition:   0,
-		ttype:              &tokenType,
+		ttype:              tokenType,
 		tokens:             tokens,
 		semanticCandidates: CF_END_OF_OPTIONS.SemanticCandidates,
 		boundTo:            nil,
@@ -99,10 +99,10 @@ func TestToken_IsBoundToCF(t *testing.T) {
 
 func TestToken_IsOption(t *testing.T) {
 	var tokens = TokenList{}
-	var tokenType TokenType = ONE_DASH_WORD
+	var tokenType TokenType = &ONE_DASH_WORD
 	token := Token{
 		argumentPosition:   0,
-		ttype:              &tokenType,
+		ttype:              tokenType,
 		tokens:             tokens,
 		semanticCandidates: ONE_DASH_WORD.SemanticCandidates,
 		boundTo:            nil,
