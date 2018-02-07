@@ -39,29 +39,34 @@ func (tokenType *ContextFreeTokenType) Regexp() (*regexp.Regexp, bool) {
 	return reg, isMatchAllRegex
 }
 
-const OptionWordGroup = `([A-Za-z0-9][\w_\.-]+)`
-const ValueWordGroup = `(.*)`
+const regexAlphaNumChar = `[A-Za-z0-9]`
+const regexAlphaChar = `[A-Za-z]`
+const regexNumChar = `[0-9]`
+const regexOptionChar = `[\w_\.-]`
+const regexValueWordGroup = `(.*)`
+
+var regexOptionWordGroup = fmt.Sprintf(`(%s%s+)`, regexAlphaNumChar, regexOptionChar)
 
 var (
 	CfGnuExplicitAssignment = ContextFreeTokenType{
 		SemanticCandidates: []*SemanticTokenType{
 			&SemGnuExplicitAssignment,
 		},
-		regexp: fmt.Sprintf(`^--%s=%s$`, OptionWordGroup, ValueWordGroup),
+		regexp: fmt.Sprintf(`^--%s=%s$`, regexOptionWordGroup, regexValueWordGroup),
 		name:   "CfGnuExplicitAssignment",
 	}
 	CfX2lktExplicitAssignment = ContextFreeTokenType{
 		SemanticCandidates: []*SemanticTokenType{
 			&SemX2lktExplicitAssignment,
 		},
-		regexp: fmt.Sprintf(`^-%s=%s$`, OptionWordGroup, ValueWordGroup),
+		regexp: fmt.Sprintf(`^-%s=%s$`, regexOptionWordGroup, regexValueWordGroup),
 		name:   "CfX2lktExplicitAssignment",
 	}
 	CfX2lktReverseSwitch = ContextFreeTokenType{
 		SemanticCandidates: []*SemanticTokenType{
 			&SemX2lktReverseSwitch,
 		},
-		regexp: fmt.Sprintf(`^\+%s$`, OptionWordGroup),
+		regexp: fmt.Sprintf(`^\+%s$`, regexOptionWordGroup),
 		name:   "CfX2lktReverseSwitch",
 	}
 	CfEndOfOptions = ContextFreeTokenType{
@@ -76,17 +81,31 @@ var (
 			&SemPosixShortAssignmentLeftSide,
 			&SemPosixShortSwitch,
 		},
-		regexp: `^-(\w)$`,
+		regexp: fmt.Sprintf(`^-(%s)$`, regexAlphaNumChar),
 		name:   "CfOneDashLetter",
 	}
-	CfOneDashWord = ContextFreeTokenType{
+	CfPosixShortStickyValue = ContextFreeTokenType{
+		SemanticCandidates: []*SemanticTokenType{
+			&SemPosixShortStickyValue,
+		},
+		regexp: fmt.Sprintf(`^-(%s)(%s+)$`, regexAlphaChar, regexNumChar),
+		name:   "CfPosixShortStickyValue",
+	}
+	CfOneDashWordAlphaNum = ContextFreeTokenType{
 		SemanticCandidates: []*SemanticTokenType{
 			&SemPosixStackedShortSwitches,
-			&SemPosixShortStickyValue,
 			&SemX2lktSwitch,
 			&SemX2lktImplicitAssignmentLeftSide,
 		},
-		regexp: fmt.Sprintf(`^-%s$`, OptionWordGroup),
+		regexp: fmt.Sprintf(`^-(%s{2,})$`, regexAlphaNumChar),
+		name:   "CfOneDashWordAlphaNum",
+	}
+	CfOneDashWord = ContextFreeTokenType{
+		SemanticCandidates: []*SemanticTokenType{
+			&SemX2lktSwitch,
+			&SemX2lktImplicitAssignmentLeftSide,
+		},
+		regexp: fmt.Sprintf(`^-%s$`, regexOptionWordGroup),
 		name:   "CfOneDashWord",
 	}
 	CfTwoDashWord = ContextFreeTokenType{
@@ -94,7 +113,7 @@ var (
 			&SemGnuSwitch,
 			&SemGnuImplicitAssignmentLeftSide,
 		},
-		regexp: fmt.Sprintf(`^--%s$`, OptionWordGroup),
+		regexp: fmt.Sprintf(`^--%s$`, regexOptionWordGroup),
 		name:   "CfTwoDashWord",
 	}
 	CfWord = ContextFreeTokenType{
@@ -113,6 +132,8 @@ var ContextFreeTokenTypes = []*ContextFreeTokenType{
 	&CfGnuExplicitAssignment,
 	&CfX2lktReverseSwitch,
 	&CfX2lktExplicitAssignment,
+	&CfPosixShortStickyValue,
+	&CfOneDashWordAlphaNum,
 	&CfEndOfOptions,
 	&CfTwoDashWord,
 	&CfOneDashLetter,

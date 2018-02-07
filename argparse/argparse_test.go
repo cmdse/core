@@ -21,8 +21,8 @@ var tests = []testTuple{
 		[]string{"--po=TOTO_to", "SemOperand", "--only", "argument"},
 		[]TokenType{&SemGnuExplicitAssignment, &SemOperand, &SemGnuSwitch, &SemOperand},
 	}, {
-		[]string{"-option", "-other-option", "--", "-arg", "--arg2", "argument"},
-		[]TokenType{&SemX2lktSwitch, &SemX2lktSwitch, &SemEndOfOptions, &SemOperand, &SemOperand, &SemOperand},
+		[]string{"-option", "-long-option", "--", "-arg", "--arg2", "argument"},
+		[]TokenType{&CfOneDashWordAlphaNum, &SemX2lktSwitch, &SemEndOfOptions, &SemOperand, &SemOperand, &SemOperand},
 	},
 }
 
@@ -33,7 +33,7 @@ func compareTokenArrays(tokens TokenList, types []TokenType) (isEqual bool, err 
 	for i, token := range tokens {
 		ttype := token.ttype
 		if ttype != types[i] {
-			return false, fmt.Errorf("expected %T '%s' at position %v for token '%s' but found %T '%s'\n\tWith candidates: %v'", types[i], types[i], i, token.value, ttype, ttype, token.semanticCandidates)
+			return false, fmt.Errorf("expected %T '%s' at position %v for token '%s' but found %T '%s'\n\tToken %v candidates: %v", types[i], types[i], i, token.value, ttype, ttype, i, token.semanticCandidates)
 		}
 	}
 	return true, nil
