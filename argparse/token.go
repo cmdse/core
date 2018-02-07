@@ -1,6 +1,7 @@
 package argparse
 
 import (
+	. "cmdse-cli/schema"
 	"fmt"
 	"strings"
 )

@@ -1,6 +1,9 @@
 package argparse
 
-import "testing"
+import (
+	. "cmdse-cli/schema"
+	"testing"
+)
 
 func TestToken_IsBoundToOneOfCF(t *testing.T) {
 	// Test with a context-free type

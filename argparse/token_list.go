@@ -1,5 +1,9 @@
 package argparse
 
+import (
+	. "cmdse-cli/schema"
+)
+
 type TokenList []*Token
 
 func (tokens TokenList) Parse() TokenList {

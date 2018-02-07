@@ -1,5 +1,9 @@
 package argparse
 
+import (
+	. "cmdse-cli/schema"
+)
+
 func ParseArgument(arg string) *ContextFreeTokenType {
 	for _, ttype := range ContextFreeTokenTypes {
 		regex, isMatchAll := ttype.Regexp()

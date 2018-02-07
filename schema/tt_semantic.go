@@ -1,8 +1,9 @@
-package argparse
+package schema
 
 type SemanticTokenType struct {
 	posModel *PositionalModel
 	name     string
+	style    OptionStyle
 }
 
 func (tokenType *SemanticTokenType) IsSemantic() bool {
@@ -30,73 +31,90 @@ var (
 	SemPosixShortSwitch = SemanticTokenType{
 		posModel: &OPT_SWITCH,
 		name:     "SemPosixShortSwitch",
+		style:    OptStylePOSIX,
 	}
 	SemPosixStackedShortSwitches = SemanticTokenType{
 		posModel: &OPT_SWITCH,
 		name:     "SemPosixStackedShortSwitches",
+		style:    OptStylePOSIX,
 	}
 	SemPosixShortAssignmentLeftSide = SemanticTokenType{
 		posModel: &OPT_IMPLICIT_ASSIGNMENT_LEFT_SIDE,
 		name:     "SemPosixShortAssignmentLeftSide",
+		style:    OptStylePOSIX,
 	}
 	SemPosixShortAssignmentValue = SemanticTokenType{
 		posModel: &OPT_IMPLICIT_ASSIGNMENT_VALUE,
 		name:     "SemPosixShortAssignmentValue",
+		style:    OptStylePOSIX,
 	}
 	SemPosixShortStickyValue = SemanticTokenType{
 		posModel: &STANDALONE_OPT_ASSIGNMENT,
 		name:     "SemPosixShortStickyValue",
+		style:    OptStylePOSIX,
 	}
 	// GNU
 	SemGnuSwitch = SemanticTokenType{
 		posModel: &OPT_SWITCH,
 		name:     "SemGnuSwitch",
+		style:    OptStyleGNU,
 	}
 	SemGnuExplicitAssignment = SemanticTokenType{
 		posModel: &STANDALONE_OPT_ASSIGNMENT,
 		name:     "SemGnuExplicitAssignment",
+		style:    OptStyleGNU,
 	}
 	SemGnuImplicitAssignmentLeftSide = SemanticTokenType{
 		posModel: &OPT_IMPLICIT_ASSIGNMENT_LEFT_SIDE,
 		name:     "SemGnuImplicitAssignmentLeftSide",
+		style:    OptStyleGNU,
 	}
 	SemGnuImplicitAssignmentValue = SemanticTokenType{
 		posModel: &OPT_IMPLICIT_ASSIGNMENT_VALUE,
 		name:     "SemGnuImplicitAssignmentValue",
+		style:    OptStyleGNU,
 	}
 	// X-Toolkit
 	SemX2lktSwitch = SemanticTokenType{
 		posModel: &OPT_SWITCH,
 		name:     "SemX2lktSwitch",
+		style:    OptStyleXToolkit,
 	}
 	SemX2lktReverseSwitch = SemanticTokenType{
 		posModel: &OPT_SWITCH,
 		name:     "SemX2lktReverseSwitch",
+		style:    OptStyleXToolkit,
 	}
 	SemX2lktExplicitAssignment = SemanticTokenType{
 		posModel: &STANDALONE_OPT_ASSIGNMENT,
 		name:     "SemX2lktExplicitAssignment",
+		style:    OptStyleXToolkit,
 	}
 	SemX2lktImplicitAssignmentLeftSide = SemanticTokenType{
 		posModel: &OPT_IMPLICIT_ASSIGNMENT_LEFT_SIDE,
 		name:     "SemX2lktImplicitAssignmentLeftSide",
+		style:    OptStyleXToolkit,
 	}
 	SemX2lktImplicitAssignmentValue = SemanticTokenType{
 		posModel: &OPT_IMPLICIT_ASSIGNMENT_VALUE,
 		name:     "SemX2lktImplicitAssignmentValue",
+		style:    OptStyleXToolkit,
 	}
 	// Special tokens
 	SemEndOfOptions = SemanticTokenType{
 		posModel: &OPT_SWITCH,
 		name:     "SemEndOfOptions",
+		style:    OptStyleNone,
 	}
 	SemOperand = SemanticTokenType{
 		posModel: &COMMAND_OPERAND,
 		name:     "SemOperand",
+		style:    OptStyleNone,
 	}
 	SemHeadlessOption = SemanticTokenType{
 		posModel: &OPT_SWITCH,
 		name:     "SemHeadlessOption",
+		style:    OptStyleOld,
 	}
 )
 

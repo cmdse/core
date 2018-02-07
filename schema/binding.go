@@ -1,4 +1,4 @@
-package argparse
+package schema
 
 type Binding int
 
