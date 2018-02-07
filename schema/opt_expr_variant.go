@@ -1,70 +1,80 @@
 package schema
 
-type ExprAssemblyModel int
+import "regexp"
 
-const (
-	AssmbModelSplit     ExprAssemblyModel = iota // tokens 1, options 1, use regex to split flag and value
-	AssmbModelGroup                              // tokens 2, options 1, assign left side to flag, right side to value
-	AssmbModelFlag                               // tokens 1, options 1, standalone flag
-	AssmbModelFlagStack                          // tokens 1, options n, split each letter to one AssmbModelFlag
-)
-
-type ExpressionVariant struct {
+type OptExpressionVariant struct {
 	style         OptionStyle
-	assemblyModel ExprAssemblyModel
+	assemblyRegex *regexp.Regexp
+	assemblyModel *ExprAssemblyModel
+}
+
+func (optVariant *OptExpressionVariant) Assemble(expression OptionParts) *OptionExpression {
+	return optVariant.assemblyModel.Assemble(expression, optVariant.assemblyRegex)
 }
 
 var (
-	VarPOSIXShortSwitch = ExpressionVariant{
+	VariantPOSIXShortSwitch = &OptExpressionVariant{
 		style:         OptStylePOSIX,
+		assemblyRegex: RegexOneDashLetter,
 		assemblyModel: AssmbModelFlag,
 	}
-	VarPOSIXStackedShortSwitches = ExpressionVariant{
+	VariantPOSIXStackedShortSwitches = &OptExpressionVariant{
 		style:         OptStylePOSIX,
+		assemblyRegex: RegexOneDashWordAlphaNum,
 		assemblyModel: AssmbModelFlagStack,
 	}
-	VarPOSIXShortAssignment = ExpressionVariant{
+	VariantPOSIXShortAssignment = &OptExpressionVariant{
 		style:         OptStylePOSIX,
 		assemblyModel: AssmbModelGroup,
 	}
-	VarPOSIXShortStickyValue = ExpressionVariant{
+	VariantPOSIXShortStickyValue = &OptExpressionVariant{
 		style:         OptStylePOSIX,
+		assemblyRegex: RegexPosixShortStickyValue,
 		assemblyModel: AssmbModelSplit,
 	}
-	VarX2lktSwitch = ExpressionVariant{
+	VariantX2lktSwitch = &OptExpressionVariant{
 		style:         OptStyleXToolkit,
+		assemblyRegex: RegexOneDashWord,
 		assemblyModel: AssmbModelFlag,
 	}
-	VarX2lktReverseSwitch = ExpressionVariant{
+	VariantX2lktReverseSwitch = &OptExpressionVariant{
 		style:         OptStyleXToolkit,
+		assemblyRegex: RegexX2lktReverseSwitch,
 		assemblyModel: AssmbModelFlag,
 	}
-	VarX2lktImplicitAssignment = ExpressionVariant{
+	VariantX2lktImplicitAssignment = &OptExpressionVariant{
 		style:         OptStyleXToolkit,
+		assemblyRegex: RegexX2lktReverseSwitch,
 		assemblyModel: AssmbModelGroup,
 	}
-	VarX2lktExplicitAssignment = ExpressionVariant{
+	VariantX2lktExplicitAssignment = &OptExpressionVariant{
 		style:         OptStyleXToolkit,
+		assemblyRegex: RegexX2lktExplicitAssignment,
 		assemblyModel: AssmbModelSplit,
 	}
-	VarGNUSwitch = ExpressionVariant{
+	VariantGNUSwitch = &OptExpressionVariant{
 		style:         OptStyleGNU,
+		assemblyRegex: RegexTwoDashWord,
 		assemblyModel: AssmbModelFlag,
 	}
-	VarGNUImplicitAssignment = ExpressionVariant{
+	VariantGNUImplicitAssignment = &OptExpressionVariant{
 		style:         OptStyleGNU,
+		assemblyRegex: RegexTwoDashWord,
 		assemblyModel: AssmbModelGroup,
 	}
-	VarGNUExplicitAssignment = ExpressionVariant{
+	VariantGNUExplicitAssignment = &OptExpressionVariant{
 		style:         OptStyleGNU,
+		assemblyRegex: RegexGnuExplicitAssignment,
 		assemblyModel: AssmbModelSplit,
 	}
-	VarEndOfOptions = ExpressionVariant{
+	VariantEndOfOptions = &OptExpressionVariant{
 		style:         OptStyleNone,
+		assemblyRegex: RegexEndOfOptions,
 		assemblyModel: AssmbModelFlag,
 	}
-	VarHeadlessOption = ExpressionVariant{
+	VariantHeadlessOption = &OptExpressionVariant{
 		style:         OptStyleOld,
+		assemblyRegex: RegexMatchAny,
 		assemblyModel: AssmbModelFlag,
 	}
 )
