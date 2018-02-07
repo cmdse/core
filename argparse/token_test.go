@@ -5,12 +5,12 @@ import "testing"
 func TestToken_IsBoundToOneOfCF(t *testing.T) {
 	// Test with a context-free type
 	var tokens = TokenList{}
-	var tokenType TokenType = &ONE_DASH_WORD
+	var tokenType TokenType = &CfOneDashWord
 	token := Token{
 		argumentPosition:   0,
 		ttype:              tokenType,
 		tokens:             tokens,
-		semanticCandidates: ONE_DASH_WORD.SemanticCandidates,
+		semanticCandidates: CfOneDashWord.SemanticCandidates,
 		boundTo:            nil,
 		value:              "-option",
 	}
@@ -33,7 +33,7 @@ func TestToken_IsBoundToOneOfCF(t *testing.T) {
 func TestToken_IsBoundToOneOfSem(t *testing.T) {
 	// test with a semantic token
 	var tokens = TokenList{}
-	var tokenType TokenType = &X2LKT_SWITCH
+	var tokenType TokenType = &SemX2lktSwitch
 	token := Token{
 		argumentPosition:   0,
 		ttype:              tokenType,
@@ -55,7 +55,7 @@ func TestToken_IsBoundToOneOfSem(t *testing.T) {
 
 func TestToken_IsBoundToSem(t *testing.T) {
 	var tokens = TokenList{}
-	var tokenType TokenType = &X2LKT_SWITCH
+	var tokenType TokenType = &SemX2lktSwitch
 	token := Token{
 		argumentPosition:   0,
 		ttype:              tokenType,
@@ -77,12 +77,12 @@ func TestToken_IsBoundToSem(t *testing.T) {
 
 func TestToken_IsBoundToCF(t *testing.T) {
 	var tokens = TokenList{}
-	var tokenType TokenType = &CF_END_OF_OPTIONS
+	var tokenType TokenType = &CfEndOfOptions
 	token := Token{
 		argumentPosition:   0,
 		ttype:              tokenType,
 		tokens:             tokens,
-		semanticCandidates: CF_END_OF_OPTIONS.SemanticCandidates,
+		semanticCandidates: CfEndOfOptions.SemanticCandidates,
 		boundTo:            nil,
 		value:              "--",
 	}
@@ -99,17 +99,17 @@ func TestToken_IsBoundToCF(t *testing.T) {
 
 func TestToken_IsOption(t *testing.T) {
 	var tokens = TokenList{}
-	var tokenType TokenType = &ONE_DASH_WORD
+	var tokenType TokenType = &CfOneDashWord
 	token := Token{
 		argumentPosition:   0,
 		ttype:              tokenType,
 		tokens:             tokens,
-		semanticCandidates: ONE_DASH_WORD.SemanticCandidates,
+		semanticCandidates: CfOneDashWord.SemanticCandidates,
 		boundTo:            nil,
 		value:              "-test",
 	}
 	tokens = append(tokens, &token)
-	isOption := token.IsOption()
+	isOption := token.IsOptionPart()
 	if !isOption {
 		t.Errorf("token should be option")
 	}

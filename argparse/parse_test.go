@@ -5,30 +5,30 @@ import (
 )
 
 var expectedTokens = map[string]*ContextFreeTokenType{
-	"--option=value":      &CF_GNU_EXPLICIT_ASSIGNMENT,
-	"--option=12":         &CF_GNU_EXPLICIT_ASSIGNMENT,
-	"--long-option=value": &CF_GNU_EXPLICIT_ASSIGNMENT,
-	"--long_option=value": &CF_GNU_EXPLICIT_ASSIGNMENT,
-	"--long_option=12":    &CF_GNU_EXPLICIT_ASSIGNMENT,
-	"--po=TOTO_to":        &CF_GNU_EXPLICIT_ASSIGNMENT,
-	"-option=value":       &CF_X2LKT_EXPLICIT_ASSIGNMENT,
-	"-option=12":          &CF_X2LKT_EXPLICIT_ASSIGNMENT,
-	"-long-option=value":  &CF_X2LKT_EXPLICIT_ASSIGNMENT,
-	"-long_option=value":  &CF_X2LKT_EXPLICIT_ASSIGNMENT,
-	"+option":             &CF_X2LKT_REVERSE_SWITCH,
-	"+long-option":        &CF_X2LKT_REVERSE_SWITCH,
-	"+long_option":        &CF_X2LKT_REVERSE_SWITCH,
-	"--":                  &CF_END_OF_OPTIONS,
-	"-o":                  &ONE_DASH_LETTER,
-	"-ns.flag":            &ONE_DASH_WORD, // go cli style namespaced flags
-	"-n3":                 &ONE_DASH_WORD, // Typical stick value assignment
-	"-n12":                &ONE_DASH_WORD,
-	"--option":            &TWO_DASH_WORD,
-	"--long-option":       &TWO_DASH_WORD,
-	"-_not_an_option":     &WORD,
-	"--_not_an_option":    &WORD,
-	"word":                &WORD,
-	"word with spaces":    &WORD,
+	"--option=value":      &CfGnuExplicitAssignment,
+	"--option=12":         &CfGnuExplicitAssignment,
+	"--long-option=value": &CfGnuExplicitAssignment,
+	"--long_option=value": &CfGnuExplicitAssignment,
+	"--long_option=12":    &CfGnuExplicitAssignment,
+	"--po=TOTO_to":        &CfGnuExplicitAssignment,
+	"-option=value":       &CfX2lktExplicitAssignment,
+	"-option=12":          &CfX2lktExplicitAssignment,
+	"-long-option=value":  &CfX2lktExplicitAssignment,
+	"-long_option=value":  &CfX2lktExplicitAssignment,
+	"+option":             &CfX2lktReverseSwitch,
+	"+long-option":        &CfX2lktReverseSwitch,
+	"+long_option":        &CfX2lktReverseSwitch,
+	"--":                  &CfEndOfOptions,
+	"-o":                  &CfOneDashLetter,
+	"-ns.flag":            &CfOneDashWord, // go cli style namespaced flags
+	"-n3":                 &CfOneDashWord, // Typical stick value assignment
+	"-n12":                &CfOneDashWord,
+	"--option":            &CfTwoDashWord,
+	"--long-option":       &CfTwoDashWord,
+	"-_not_an_option":     &CfWord,
+	"--_not_an_option":    &CfWord,
+	"word":                &CfWord,
+	"word with spaces":    &CfWord,
 }
 
 func TestParseArgument(t *testing.T) {

@@ -80,12 +80,12 @@ func (token *Token) IsBoundToOneOf(bindings Bindings) bool {
 	}
 }
 
-func (token *Token) IsOption() bool {
+func (token *Token) IsOptionPart() bool {
 	ttype := token.ttype
 	if ttype.PosModel().Equal(&UNSET) {
 		isOption := false
 		for _, semToken := range token.semanticCandidates {
-			if semToken.PosModel().IsOption {
+			if semToken.PosModel().IsOptionPart {
 				isOption = true
 			} else {
 				isOption = false
@@ -94,7 +94,24 @@ func (token *Token) IsOption() bool {
 		}
 		return isOption
 	} else {
-		return ttype.PosModel().IsOption
+		return ttype.PosModel().IsOptionPart
+	}
+}
+func (token *Token) IsOptionFlag() bool {
+	ttype := token.ttype
+	if ttype.PosModel().Equal(&UNSET) {
+		isOption := false
+		for _, semToken := range token.semanticCandidates {
+			if semToken.PosModel().IsOptionFlag {
+				isOption = true
+			} else {
+				isOption = false
+				break
+			}
+		}
+		return isOption
+	} else {
+		return ttype.PosModel().IsOptionFlag
 	}
 }
 
@@ -110,9 +127,9 @@ func (token *Token) InferLeft() {
 			leftNeighbour := token.tokens[position-1]
 			nbrBoundToLeftOrNone := leftNeighbour.IsBoundToOneOf(Bindings{NONE, LEFT})
 			if nbrBoundToLeftOrNone {
-				if !token.IsOption() {
+				if !token.IsOptionPart() {
 					// Must be Operand
-					token.setCandidate(&OPERAND)
+					token.setCandidate(&SemOperand)
 				} else {
 					// Remove any bound to LEFT
 					token.reduceCandidates(func(tokenType *SemanticTokenType) bool {
@@ -133,7 +150,7 @@ func (token *Token) InferRight() {
 	position := token.argumentPosition
 	switch token.ttype.(type) {
 	case *ContextFreeTokenType:
-		if token.IsOption() && position < len(token.tokens)+1 {
+		if token.IsOptionPart() && position < len(token.tokens)+1 {
 			rightNeighbour := token.tokens[position+1]
 			nbrBoundToRightOrNone := rightNeighbour.IsBoundToOneOf(Bindings{NONE, RIGHT})
 			if nbrBoundToRightOrNone {
@@ -150,8 +167,8 @@ func (token *Token) InferRight() {
 func (token *Token) InferPositional() {
 	position := token.argumentPosition
 	if position == len(token.tokens)-1 {
-		if !token.IsOption() {
-			token.setCandidate(&OPERAND)
+		if !token.IsOptionPart() {
+			token.setCandidate(&SemOperand)
 		}
 	}
 }

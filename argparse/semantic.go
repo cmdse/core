@@ -26,92 +26,96 @@ func (tokenType *SemanticTokenType) Equal(comparedTType TokenType) bool {
 }
 
 var (
-	X2LKT_REVERSE_SWITCH = SemanticTokenType{
+	// Posix
+	SemPosixShortSwitch = SemanticTokenType{
 		posModel: &OPT_SWITCH,
-		name:     "X2LKT_REVERSE_SWITCH",
+		name:     "SemPosixShortSwitch",
 	}
-	GNU_EXPLICIT_ASSIGNMENT = SemanticTokenType{
-		posModel: &STANDALONE_OPT_ASSIGNMENT,
-		name:     "GNU_EXPLICIT_ASSIGNMENT",
-	}
-	X2LKT_EXPLICIT_ASSIGNMENT = SemanticTokenType{
-		posModel: &STANDALONE_OPT_ASSIGNMENT,
-		name:     "X2LKT_EXPLICIT_ASSIGNMENT",
-	}
-	END_OF_OPTIONS = SemanticTokenType{
+	SemPosixStackedShortSwitches = SemanticTokenType{
 		posModel: &OPT_SWITCH,
-		name:     "END_OF_OPTIONS",
+		name:     "SemPosixStackedShortSwitches",
 	}
-	POSIX_SHORT_SWITCH = SemanticTokenType{
-		posModel: &OPT_SWITCH,
-		name:     "POSIX_SHORT_SWITCH",
-	}
-	POSIX_STACKED_SHORT_SWITCHES = SemanticTokenType{
-		posModel: &OPT_SWITCH,
-		name:     "POSIX_STACKED_SHORT_SWITCHES",
-	}
-	POSIX_SHORT_ASSIGNMENT_LEFT_SIDE = SemanticTokenType{
+	SemPosixShortAssignmentLeftSide = SemanticTokenType{
 		posModel: &OPT_IMPLICIT_ASSIGNMENT_LEFT_SIDE,
-		name:     "POSIX_SHORT_ASSIGNMENT_LEFT_SIDE",
+		name:     "SemPosixShortAssignmentLeftSide",
 	}
-	POSIX_SHORT_ASSIGNMENT_VALUE = SemanticTokenType{
+	SemPosixShortAssignmentValue = SemanticTokenType{
 		posModel: &OPT_IMPLICIT_ASSIGNMENT_VALUE,
-		name:     "POSIX_SHORT_ASSIGNMENT_VALUE",
+		name:     "SemPosixShortAssignmentValue",
 	}
-	POSIX_SHORT_STICKY_VALUE = SemanticTokenType{
+	SemPosixShortStickyValue = SemanticTokenType{
 		posModel: &STANDALONE_OPT_ASSIGNMENT,
-		name:     "POSIX_SHORT_STICKY_VALUE",
+		name:     "SemPosixShortStickyValue",
 	}
-	GNU_SWITCH = SemanticTokenType{
+	// GNU
+	SemGnuSwitch = SemanticTokenType{
 		posModel: &OPT_SWITCH,
-		name:     "GNU_SWITCH",
+		name:     "SemGnuSwitch",
 	}
-	GNU_IMPLICIT_ASSIGNMENT_LEFT_SIDE = SemanticTokenType{
+	SemGnuExplicitAssignment = SemanticTokenType{
+		posModel: &STANDALONE_OPT_ASSIGNMENT,
+		name:     "SemGnuExplicitAssignment",
+	}
+	SemGnuImplicitAssignmentLeftSide = SemanticTokenType{
 		posModel: &OPT_IMPLICIT_ASSIGNMENT_LEFT_SIDE,
-		name:     "GNU_IMPLICIT_ASSIGNMENT_LEFT_SIDE",
+		name:     "SemGnuImplicitAssignmentLeftSide",
 	}
-	GNU_IMPLICIT_ASSIGNMENT_VALUE = SemanticTokenType{
+	SemGnuImplicitAssignmentValue = SemanticTokenType{
 		posModel: &OPT_IMPLICIT_ASSIGNMENT_VALUE,
-		name:     "GNU_IMPLICIT_ASSIGNMENT_VALUE",
+		name:     "SemGnuImplicitAssignmentValue",
 	}
-	X2LKT_SWITCH = SemanticTokenType{
+	// X-Toolkit
+	SemX2lktSwitch = SemanticTokenType{
 		posModel: &OPT_SWITCH,
-		name:     "X2LKT_SWITCH",
+		name:     "SemX2lktSwitch",
 	}
-	X2LKT_IMPLICIT_ASSIGNEMNT_LEFT_SIDE = SemanticTokenType{
+	SemX2lktReverseSwitch = SemanticTokenType{
+		posModel: &OPT_SWITCH,
+		name:     "SemX2lktReverseSwitch",
+	}
+	SemX2lktExplicitAssignment = SemanticTokenType{
+		posModel: &STANDALONE_OPT_ASSIGNMENT,
+		name:     "SemX2lktExplicitAssignment",
+	}
+	SemX2lktImplicitAssignmentLeftSide = SemanticTokenType{
 		posModel: &OPT_IMPLICIT_ASSIGNMENT_LEFT_SIDE,
-		name:     "X2LKT_IMPLICIT_ASSIGNEMNT_LEFT_SIDE",
+		name:     "SemX2lktImplicitAssignmentLeftSide",
 	}
-	X2LKT_IMPLICIT_ASSIGNMENT_VALUE = SemanticTokenType{
+	SemX2lktImplicitAssignmentValue = SemanticTokenType{
 		posModel: &OPT_IMPLICIT_ASSIGNMENT_VALUE,
-		name:     "X2LKT_IMPLICIT_ASSIGNMENT_VALUE",
+		name:     "SemX2lktImplicitAssignmentValue",
 	}
-	OPERAND = SemanticTokenType{
+	// Special tokens
+	SemEndOfOptions = SemanticTokenType{
+		posModel: &OPT_SWITCH,
+		name:     "SemEndOfOptions",
+	}
+	SemOperand = SemanticTokenType{
 		posModel: &COMMAND_OPERAND,
-		name:     "OPERAND",
+		name:     "SemOperand",
 	}
-	HEADLESS_OPTION = SemanticTokenType{
+	SemHeadlessOption = SemanticTokenType{
 		posModel: &OPT_SWITCH,
-		name:     "HEADLESS_OPTION",
+		name:     "SemHeadlessOption",
 	}
 )
 
 var SemanticTokenTypes = []*SemanticTokenType{
-	&END_OF_OPTIONS,
-	&GNU_EXPLICIT_ASSIGNMENT,
-	&GNU_IMPLICIT_ASSIGNMENT_LEFT_SIDE,
-	&GNU_IMPLICIT_ASSIGNMENT_VALUE,
-	&GNU_SWITCH,
-	&X2LKT_SWITCH,
-	&X2LKT_REVERSE_SWITCH,
-	&X2LKT_EXPLICIT_ASSIGNMENT,
-	&X2LKT_IMPLICIT_ASSIGNEMNT_LEFT_SIDE,
-	&X2LKT_IMPLICIT_ASSIGNMENT_VALUE,
-	&POSIX_SHORT_ASSIGNMENT_LEFT_SIDE,
-	&POSIX_SHORT_ASSIGNMENT_VALUE,
-	&POSIX_SHORT_STICKY_VALUE,
-	&POSIX_SHORT_SWITCH,
-	&POSIX_STACKED_SHORT_SWITCHES,
-	&HEADLESS_OPTION,
-	&OPERAND,
+	&SemEndOfOptions,
+	&SemGnuExplicitAssignment,
+	&SemGnuImplicitAssignmentLeftSide,
+	&SemGnuImplicitAssignmentValue,
+	&SemGnuSwitch,
+	&SemX2lktSwitch,
+	&SemX2lktReverseSwitch,
+	&SemX2lktExplicitAssignment,
+	&SemX2lktImplicitAssignmentLeftSide,
+	&SemX2lktImplicitAssignmentValue,
+	&SemPosixShortAssignmentLeftSide,
+	&SemPosixShortAssignmentValue,
+	&SemPosixShortStickyValue,
+	&SemPosixShortSwitch,
+	&SemPosixStackedShortSwitches,
+	&SemHeadlessOption,
+	&SemOperand,
 }

@@ -30,6 +30,7 @@ func initTokens(args []string) TokenList {
 			tokens:             tokens,
 		}
 		tokens[i] = &token
+		token.possiblyConvertToSemantic()
 	}
 	return tokens
 }

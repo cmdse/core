@@ -39,9 +39,9 @@ func (tokens TokenList) CheckEndOfOptions() {
 	for index, token := range tokens {
 		switch ttype := token.ttype.(type) {
 		case *SemanticTokenType:
-			if ttype.Equal(&END_OF_OPTIONS) {
+			if ttype.Equal(&SemEndOfOptions) {
 				for rightIndex := index + 1; rightIndex < len(tokens); rightIndex++ {
-					(tokens)[rightIndex].setCandidate(&OPERAND)
+					(tokens)[rightIndex].setCandidate(&SemOperand)
 				}
 			}
 		}

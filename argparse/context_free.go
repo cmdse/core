@@ -43,79 +43,79 @@ const OptionWordGroup = `([A-Za-z0-9][\w_\.-]+)`
 const ValueWordGroup = `(.*)`
 
 var (
-	CF_GNU_EXPLICIT_ASSIGNMENT = ContextFreeTokenType{
+	CfGnuExplicitAssignment = ContextFreeTokenType{
 		SemanticCandidates: []*SemanticTokenType{
-			&GNU_EXPLICIT_ASSIGNMENT,
+			&SemGnuExplicitAssignment,
 		},
 		regexp: fmt.Sprintf(`^--%s=%s$`, OptionWordGroup, ValueWordGroup),
-		name:   "CF_GNU_EXPLICIT_ASSIGNMENT",
+		name:   "CfGnuExplicitAssignment",
 	}
-	CF_X2LKT_EXPLICIT_ASSIGNMENT = ContextFreeTokenType{
+	CfX2lktExplicitAssignment = ContextFreeTokenType{
 		SemanticCandidates: []*SemanticTokenType{
-			&X2LKT_EXPLICIT_ASSIGNMENT,
+			&SemX2lktExplicitAssignment,
 		},
 		regexp: fmt.Sprintf(`^-%s=%s$`, OptionWordGroup, ValueWordGroup),
-		name:   "CF_X2LKT_EXPLICIT_ASSIGNMENT",
+		name:   "CfX2lktExplicitAssignment",
 	}
-	CF_X2LKT_REVERSE_SWITCH = ContextFreeTokenType{
+	CfX2lktReverseSwitch = ContextFreeTokenType{
 		SemanticCandidates: []*SemanticTokenType{
-			&X2LKT_REVERSE_SWITCH,
+			&SemX2lktReverseSwitch,
 		},
 		regexp: fmt.Sprintf(`^\+%s$`, OptionWordGroup),
-		name:   "CF_X2LKT_REVERSE_SWITCH",
+		name:   "CfX2lktReverseSwitch",
 	}
-	CF_END_OF_OPTIONS = ContextFreeTokenType{
+	CfEndOfOptions = ContextFreeTokenType{
 		SemanticCandidates: []*SemanticTokenType{
-			&END_OF_OPTIONS,
+			&SemEndOfOptions,
 		},
 		regexp: `^--$`,
-		name:   "CF_END_OF_OPTIONS",
+		name:   "CfEndOfOptions",
 	}
-	ONE_DASH_LETTER = ContextFreeTokenType{
+	CfOneDashLetter = ContextFreeTokenType{
 		SemanticCandidates: []*SemanticTokenType{
-			&POSIX_SHORT_ASSIGNMENT_LEFT_SIDE,
-			&POSIX_SHORT_SWITCH,
+			&SemPosixShortAssignmentLeftSide,
+			&SemPosixShortSwitch,
 		},
 		regexp: `^-(\w)$`,
-		name:   "ONE_DASH_LETTER",
+		name:   "CfOneDashLetter",
 	}
-	ONE_DASH_WORD = ContextFreeTokenType{
+	CfOneDashWord = ContextFreeTokenType{
 		SemanticCandidates: []*SemanticTokenType{
-			&POSIX_STACKED_SHORT_SWITCHES,
-			&POSIX_SHORT_STICKY_VALUE,
-			&X2LKT_SWITCH,
-			&X2LKT_IMPLICIT_ASSIGNEMNT_LEFT_SIDE,
+			&SemPosixStackedShortSwitches,
+			&SemPosixShortStickyValue,
+			&SemX2lktSwitch,
+			&SemX2lktImplicitAssignmentLeftSide,
 		},
 		regexp: fmt.Sprintf(`^-%s$`, OptionWordGroup),
-		name:   "ONE_DASH_WORD",
+		name:   "CfOneDashWord",
 	}
-	TWO_DASH_WORD = ContextFreeTokenType{
+	CfTwoDashWord = ContextFreeTokenType{
 		SemanticCandidates: []*SemanticTokenType{
-			&GNU_SWITCH,
-			&GNU_IMPLICIT_ASSIGNMENT_LEFT_SIDE,
+			&SemGnuSwitch,
+			&SemGnuImplicitAssignmentLeftSide,
 		},
 		regexp: fmt.Sprintf(`^--%s$`, OptionWordGroup),
-		name:   "TWO_DASH_WORD",
+		name:   "CfTwoDashWord",
 	}
-	WORD = ContextFreeTokenType{
+	CfWord = ContextFreeTokenType{
 		SemanticCandidates: []*SemanticTokenType{
-			&OPERAND,
-			&POSIX_SHORT_ASSIGNMENT_VALUE,
-			&GNU_IMPLICIT_ASSIGNMENT_VALUE,
-			&X2LKT_IMPLICIT_ASSIGNMENT_VALUE,
-			&HEADLESS_OPTION,
+			&SemOperand,
+			&SemPosixShortAssignmentValue,
+			&SemGnuImplicitAssignmentValue,
+			&SemX2lktImplicitAssignmentValue,
+			&SemHeadlessOption,
 		},
-		name: "WORD",
+		name: "CfWord",
 	}
 )
 
 var ContextFreeTokenTypes = []*ContextFreeTokenType{
-	&CF_GNU_EXPLICIT_ASSIGNMENT,
-	&CF_X2LKT_REVERSE_SWITCH,
-	&CF_X2LKT_EXPLICIT_ASSIGNMENT,
-	&CF_END_OF_OPTIONS,
-	&TWO_DASH_WORD,
-	&ONE_DASH_LETTER,
-	&ONE_DASH_WORD,
-	&WORD,
+	&CfGnuExplicitAssignment,
+	&CfX2lktReverseSwitch,
+	&CfX2lktExplicitAssignment,
+	&CfEndOfOptions,
+	&CfTwoDashWord,
+	&CfOneDashLetter,
+	&CfOneDashWord,
+	&CfWord,
 }
