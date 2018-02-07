@@ -3,22 +3,22 @@ package schema
 type Binding int
 
 const (
-	UNKNOWN Binding = iota
-	NONE
-	LEFT
-	RIGHT
+	BindUnknown Binding = iota
+	BindNone
+	BindLeft
+	BindRight
 )
 
 func (binding Binding) String() string {
 	switch binding {
-	case UNKNOWN:
-		return "UNKNOWN"
-	case NONE:
-		return "NONE"
-	case LEFT:
-		return "LEFT"
-	case RIGHT:
-		return "RIGHT"
+	case BindUnknown:
+		return "BindUnknown"
+	case BindNone:
+		return "BindNone"
+	case BindLeft:
+		return "BindLeft"
+	case BindRight:
+		return "BindRight"
 	default:
 		return ""
 	}

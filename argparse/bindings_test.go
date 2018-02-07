@@ -6,14 +6,14 @@ import (
 )
 
 func TestBindings_Contains(t *testing.T) {
-	bindings := Bindings{LEFT, RIGHT}
-	if !bindings.Contains(LEFT) {
-		t.Errorf("Bindings should contain 'LEFT'")
+	bindings := Bindings{BindLeft, BindRight}
+	if !bindings.Contains(BindLeft) {
+		t.Errorf("Bindings should contain 'BindLeft'")
 	}
-	if !bindings.Contains(RIGHT) {
-		t.Errorf("Bindings should contain 'RIGHT'")
+	if !bindings.Contains(BindRight) {
+		t.Errorf("Bindings should contain 'BindRight'")
 	}
-	if bindings.Contains(NONE) {
-		t.Errorf("Bindings should not contain 'NONE'")
+	if bindings.Contains(BindNone) {
+		t.Errorf("Bindings should not contain 'BindNone'")
 	}
 }

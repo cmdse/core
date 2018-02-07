@@ -21,10 +21,10 @@ func (token *Token) possiblyConvertToSemantic() {
 	if len(token.semanticCandidates) == 1 {
 		var semanticType = token.semanticCandidates[0]
 		token.ttype = semanticType
-		if semanticType.PosModel().Binding == RIGHT {
+		if semanticType.PosModel().Binding == BindRight {
 			token.boundTo = token.tokens[token.argumentPosition+1]
 		}
-		if semanticType.PosModel().Binding == LEFT {
+		if semanticType.PosModel().Binding == BindLeft {
 			token.boundTo = token.tokens[token.argumentPosition-1]
 		}
 	}
@@ -126,21 +126,21 @@ func (token *Token) InferLeft() {
 	case *ContextFreeTokenType:
 		if position > 0 {
 			leftNeighbour := token.tokens[position-1]
-			nbrBoundToLeftOrNone := leftNeighbour.IsBoundToOneOf(Bindings{NONE, LEFT})
+			nbrBoundToLeftOrNone := leftNeighbour.IsBoundToOneOf(Bindings{BindNone, BindLeft})
 			if nbrBoundToLeftOrNone {
 				if !token.IsOptionPart() {
 					// Must be Operand
 					token.setCandidate(SemOperand)
 				} else {
-					// Remove any bound to LEFT
+					// Remove any bound to BindLeft
 					token.reduceCandidates(func(tokenType *SemanticTokenType) bool {
-						return tokenType.PosModel().Binding != LEFT
+						return tokenType.PosModel().Binding != BindLeft
 					})
 				}
-			} else if leftNeighbour.IsBoundTo(RIGHT) {
-				// Remove any not bound to LEFT
+			} else if leftNeighbour.IsBoundTo(BindRight) {
+				// Remove any not bound to BindLeft
 				token.reduceCandidates(func(tokenType *SemanticTokenType) bool {
-					return tokenType.PosModel().Binding == LEFT
+					return tokenType.PosModel().Binding == BindLeft
 				})
 			}
 		}
@@ -153,11 +153,11 @@ func (token *Token) InferRight() {
 	case *ContextFreeTokenType:
 		if token.IsOptionPart() && position < len(token.tokens)+1 {
 			rightNeighbour := token.tokens[position+1]
-			nbrBoundToRightOrNone := rightNeighbour.IsBoundToOneOf(Bindings{NONE, RIGHT})
+			nbrBoundToRightOrNone := rightNeighbour.IsBoundToOneOf(Bindings{BindNone, BindRight})
 			if nbrBoundToRightOrNone {
 				// Remove candidates which are bound to right
 				token.reduceCandidates(func(tokenType *SemanticTokenType) bool {
-					return tokenType.PosModel().Binding != RIGHT
+					return tokenType.PosModel().Binding != BindRight
 				})
 			}
 

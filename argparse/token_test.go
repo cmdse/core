@@ -18,18 +18,18 @@ func TestToken_IsBoundToOneOfCF(t *testing.T) {
 		value:              "-option",
 	}
 	tokens = append(tokens, &token)
-	boundNoneOrRight := token.IsBoundToOneOf(Bindings{NONE, RIGHT})
+	boundNoneOrRight := token.IsBoundToOneOf(Bindings{BindNone, BindRight})
 	if !boundNoneOrRight {
-		t.Errorf("token should be bound NONE or RIGHT")
+		t.Errorf("token should be bound BindNone or BindRight")
 	}
 
-	boundNoneOrLeft := token.IsBoundToOneOf(Bindings{NONE, LEFT})
+	boundNoneOrLeft := token.IsBoundToOneOf(Bindings{BindNone, BindLeft})
 	if boundNoneOrLeft {
-		t.Errorf("token should not be bound NONE or LEFT")
+		t.Errorf("token should not be bound BindNone or BindLeft")
 	}
-	boundUnknownOrLeft := token.IsBoundToOneOf(Bindings{UNKNOWN, LEFT})
+	boundUnknownOrLeft := token.IsBoundToOneOf(Bindings{BindUnknown, BindLeft})
 	if boundUnknownOrLeft {
-		t.Errorf("token should not be bound UNKNOWN or LEFT")
+		t.Errorf("token should not be bound BindUnknown or BindLeft")
 	}
 }
 
@@ -46,13 +46,13 @@ func TestToken_IsBoundToOneOfSem(t *testing.T) {
 		value:              "-option",
 	}
 	tokens = append(tokens, &token)
-	boundToNoneOrLeft := token.IsBoundToOneOf(Bindings{NONE, LEFT})
+	boundToNoneOrLeft := token.IsBoundToOneOf(Bindings{BindNone, BindLeft})
 	if !boundToNoneOrLeft {
-		t.Errorf("token should be bound NONE or LEFT")
+		t.Errorf("token should be bound BindNone or BindLeft")
 	}
-	boundToUnknownOrRight := token.IsBoundToOneOf(Bindings{UNKNOWN, RIGHT})
+	boundToUnknownOrRight := token.IsBoundToOneOf(Bindings{BindUnknown, BindRight})
 	if boundToUnknownOrRight {
-		t.Errorf("token should not be bound UNKNOWN or RIGHT")
+		t.Errorf("token should not be bound BindUnknown or BindRight")
 	}
 }
 
@@ -68,13 +68,13 @@ func TestToken_IsBoundToSem(t *testing.T) {
 		value:              "-option",
 	}
 	tokens = append(tokens, &token)
-	boundToNone := token.IsBoundTo(NONE)
+	boundToNone := token.IsBoundTo(BindNone)
 	if !boundToNone {
-		t.Errorf("token should be bound NONE")
+		t.Errorf("token should be bound BindNone")
 	}
-	boundToRight := token.IsBoundTo(RIGHT)
+	boundToRight := token.IsBoundTo(BindRight)
 	if boundToRight {
-		t.Errorf("token should not be bound RIGHT")
+		t.Errorf("token should not be bound BindRight")
 	}
 }
 
@@ -90,13 +90,13 @@ func TestToken_IsBoundToCF(t *testing.T) {
 		value:              "--",
 	}
 	tokens = append(tokens, &token)
-	boundToNone := token.IsBoundTo(NONE)
+	boundToNone := token.IsBoundTo(BindNone)
 	if !boundToNone {
-		t.Errorf("token should be bound NONE")
+		t.Errorf("token should be bound BindNone")
 	}
-	boundToLeft := token.IsBoundTo(LEFT)
+	boundToLeft := token.IsBoundTo(BindLeft)
 	if boundToLeft {
-		t.Errorf("token should not be bound LEFT")
+		t.Errorf("token should not be bound BindLeft")
 	}
 }
 

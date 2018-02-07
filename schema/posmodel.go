@@ -18,42 +18,42 @@ func (posModel PositionalModel) Equal(comparedPosModel *PositionalModel) bool {
 
 var (
 	PosModOptImplicitAssignmentLeftSide = &PositionalModel{
-		Binding:      RIGHT,
+		Binding:      BindRight,
 		IsSemantic:   true,
 		IsOptionPart: true,
 		IsOptionFlag: true,
 		name:         "PosModOptImplicitAssignmentLeftSide",
 	}
 	PosModOptImplicitAssignmentValue = &PositionalModel{
-		Binding:      LEFT,
+		Binding:      BindLeft,
 		IsSemantic:   true,
 		IsOptionPart: true,
 		IsOptionFlag: false,
 		name:         "PosModOptImplicitAssignmentValue",
 	}
 	PosModStandaloneOptAssignment = &PositionalModel{
-		Binding:      NONE,
+		Binding:      BindNone,
 		IsSemantic:   true,
 		IsOptionPart: true,
 		IsOptionFlag: true,
 		name:         "PosModStandaloneOptAssignment",
 	}
 	PosModOptSwitch = &PositionalModel{
-		Binding:      NONE,
+		Binding:      BindNone,
 		IsSemantic:   true,
 		IsOptionPart: true,
 		IsOptionFlag: true,
 		name:         "PosModOptSwitch",
 	}
 	PosModCommandOperand = &PositionalModel{
-		Binding:      NONE,
+		Binding:      BindNone,
 		IsSemantic:   true,
 		IsOptionPart: false,
 		IsOptionFlag: false,
 		name:         "PosModCommandOperand",
 	}
 	PosModUnset = &PositionalModel{
-		Binding:      UNKNOWN,
+		Binding:      BindUnknown,
 		IsSemantic:   false,
 		IsOptionPart: false,
 		IsOptionFlag: false,
