@@ -49,7 +49,7 @@ func (token *Token) setCandidate(tokenType *SemanticTokenType) {
 
 func (token *Token) IsBoundTo(binding Binding) bool {
 	ttype := token.ttype
-	if ttype.PosModel().Equal(&UNSET) {
+	if ttype.PosModel().Equal(PosModUnset) {
 		isBound := true
 		for _, semToken := range token.semanticCandidates {
 			if semToken.PosModel().Binding != binding {
@@ -65,7 +65,7 @@ func (token *Token) IsBoundTo(binding Binding) bool {
 
 func (token *Token) IsBoundToOneOf(bindings Bindings) bool {
 	ttype := token.ttype
-	if ttype.PosModel().Equal(&UNSET) {
+	if ttype.PosModel().Equal(PosModUnset) {
 		isBound := false
 		for _, semToken := range token.semanticCandidates {
 			if bindings.Contains(semToken.PosModel().Binding) {
@@ -83,7 +83,7 @@ func (token *Token) IsBoundToOneOf(bindings Bindings) bool {
 
 func (token *Token) IsOptionPart() bool {
 	ttype := token.ttype
-	if ttype.PosModel().Equal(&UNSET) {
+	if ttype.PosModel().Equal(PosModUnset) {
 		isOption := false
 		for _, semToken := range token.semanticCandidates {
 			if semToken.PosModel().IsOptionPart {
@@ -100,7 +100,7 @@ func (token *Token) IsOptionPart() bool {
 }
 func (token *Token) IsOptionFlag() bool {
 	ttype := token.ttype
-	if ttype.PosModel().Equal(&UNSET) {
+	if ttype.PosModel().Equal(PosModUnset) {
 		isOption := false
 		for _, semToken := range token.semanticCandidates {
 			if semToken.PosModel().IsOptionFlag {
@@ -130,7 +130,7 @@ func (token *Token) InferLeft() {
 			if nbrBoundToLeftOrNone {
 				if !token.IsOptionPart() {
 					// Must be Operand
-					token.setCandidate(&SemOperand)
+					token.setCandidate(SemOperand)
 				} else {
 					// Remove any bound to LEFT
 					token.reduceCandidates(func(tokenType *SemanticTokenType) bool {
@@ -169,7 +169,7 @@ func (token *Token) InferPositional() {
 	position := token.argumentPosition
 	if position == len(token.tokens)-1 {
 		if !token.IsOptionPart() {
-			token.setCandidate(&SemOperand)
+			token.setCandidate(SemOperand)
 		}
 	}
 }

@@ -17,46 +17,46 @@ func (posModel PositionalModel) Equal(comparedPosModel *PositionalModel) bool {
 }
 
 var (
-	OPT_IMPLICIT_ASSIGNMENT_LEFT_SIDE = PositionalModel{
+	PosModOptImplicitAssignmentLeftSide = &PositionalModel{
 		Binding:      RIGHT,
 		IsSemantic:   true,
 		IsOptionPart: true,
 		IsOptionFlag: true,
-		name:         "OPT_IMPLICIT_ASSIGNMENT_LEFT_SIDE",
+		name:         "PosModOptImplicitAssignmentLeftSide",
 	}
-	OPT_IMPLICIT_ASSIGNMENT_VALUE = PositionalModel{
+	PosModOptImplicitAssignmentValue = &PositionalModel{
 		Binding:      LEFT,
 		IsSemantic:   true,
 		IsOptionPart: true,
 		IsOptionFlag: false,
-		name:         "OPT_IMPLICIT_ASSIGNMENT_VALUE",
+		name:         "PosModOptImplicitAssignmentValue",
 	}
-	STANDALONE_OPT_ASSIGNMENT = PositionalModel{
+	PosModStandaloneOptAssignment = &PositionalModel{
 		Binding:      NONE,
 		IsSemantic:   true,
 		IsOptionPart: true,
 		IsOptionFlag: true,
-		name:         "STANDALONE_OPT_ASSIGNMENT",
+		name:         "PosModStandaloneOptAssignment",
 	}
-	OPT_SWITCH = PositionalModel{
+	PosModOptSwitch = &PositionalModel{
 		Binding:      NONE,
 		IsSemantic:   true,
 		IsOptionPart: true,
 		IsOptionFlag: true,
-		name:         "OPT_SWITCH",
+		name:         "PosModOptSwitch",
 	}
-	COMMAND_OPERAND = PositionalModel{
+	PosModCommandOperand = &PositionalModel{
 		Binding:      NONE,
 		IsSemantic:   true,
 		IsOptionPart: false,
 		IsOptionFlag: false,
-		name:         "COMMAND_OPERAND",
+		name:         "PosModCommandOperand",
 	}
-	UNSET = PositionalModel{
+	PosModUnset = &PositionalModel{
 		Binding:      UNKNOWN,
 		IsSemantic:   false,
 		IsOptionPart: false,
 		IsOptionFlag: false,
-		name:         "UNSET",
+		name:         "PosModUnset",
 	}
 )

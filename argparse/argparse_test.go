@@ -14,16 +14,16 @@ type testTuple struct {
 var tests = []testTuple{
 	{
 		[]string{"-l", "-p", "--only", "argument"},
-		[]TokenType{&SemPosixShortSwitch, &SemPosixShortSwitch, &SemGnuSwitch, &SemOperand},
+		[]TokenType{SemPosixShortSwitch, SemPosixShortSwitch, SemGnuSwitch, SemOperand},
 	}, {
 		[]string{"-l", "--po=TOTO_to", "--only", "argument"},
-		[]TokenType{&SemPosixShortSwitch, &SemGnuExplicitAssignment, &SemGnuSwitch, &SemOperand},
+		[]TokenType{SemPosixShortSwitch, SemGnuExplicitAssignment, SemGnuSwitch, SemOperand},
 	}, {
 		[]string{"--po=TOTO_to", "SemOperand", "--only", "argument"},
-		[]TokenType{&SemGnuExplicitAssignment, &SemOperand, &SemGnuSwitch, &SemOperand},
+		[]TokenType{SemGnuExplicitAssignment, SemOperand, SemGnuSwitch, SemOperand},
 	}, {
 		[]string{"-option", "-long-option", "--", "-arg", "--arg2", "argument"},
-		[]TokenType{&CfOneDashWordAlphaNum, &SemX2lktSwitch, &SemEndOfOptions, &SemOperand, &SemOperand, &SemOperand},
+		[]TokenType{CfOneDashWordAlphaNum, SemX2lktSwitch, SemEndOfOptions, SemOperand, SemOperand, SemOperand},
 	},
 }
 

@@ -8,7 +8,7 @@ import (
 func TestToken_IsBoundToOneOfCF(t *testing.T) {
 	// Test with a context-free type
 	var tokens = TokenList{}
-	var tokenType TokenType = &CfOneDashWord
+	var tokenType TokenType = CfOneDashWord
 	token := Token{
 		argumentPosition:   0,
 		ttype:              tokenType,
@@ -36,7 +36,7 @@ func TestToken_IsBoundToOneOfCF(t *testing.T) {
 func TestToken_IsBoundToOneOfSem(t *testing.T) {
 	// test with a semantic token
 	var tokens = TokenList{}
-	var tokenType TokenType = &SemX2lktSwitch
+	var tokenType TokenType = SemX2lktSwitch
 	token := Token{
 		argumentPosition:   0,
 		ttype:              tokenType,
@@ -58,7 +58,7 @@ func TestToken_IsBoundToOneOfSem(t *testing.T) {
 
 func TestToken_IsBoundToSem(t *testing.T) {
 	var tokens = TokenList{}
-	var tokenType TokenType = &SemX2lktSwitch
+	var tokenType TokenType = SemX2lktSwitch
 	token := Token{
 		argumentPosition:   0,
 		ttype:              tokenType,
@@ -80,7 +80,7 @@ func TestToken_IsBoundToSem(t *testing.T) {
 
 func TestToken_IsBoundToCF(t *testing.T) {
 	var tokens = TokenList{}
-	var tokenType TokenType = &CfEndOfOptions
+	var tokenType TokenType = CfEndOfOptions
 	token := Token{
 		argumentPosition:   0,
 		ttype:              tokenType,
@@ -102,7 +102,7 @@ func TestToken_IsBoundToCF(t *testing.T) {
 
 func TestToken_IsOption(t *testing.T) {
 	var tokens = TokenList{}
-	var tokenType TokenType = &CfOneDashWord
+	var tokenType TokenType = CfOneDashWord
 	token := Token{
 		argumentPosition:   0,
 		ttype:              tokenType,
