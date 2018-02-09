@@ -6,12 +6,18 @@ import (
 	"testing"
 )
 
-type testTuple struct {
+type simpleTest struct {
 	arguments     []string
 	expectedTypes []TokenType
 }
 
-var tests = []testTuple{
+type testWithScheme struct {
+	arguments     []string
+	expectedTypes []TokenType
+	scheme        OptionScheme
+}
+
+var testCore = []simpleTest{
 	{
 		[]string{"-l", "-p", "--only", "argument"},
 		[]TokenType{SemPosixShortSwitch, SemPosixShortSwitch, SemGnuSwitch, SemOperand},
@@ -24,6 +30,19 @@ var tests = []testTuple{
 	}, {
 		[]string{"-option", "-long-option", "--", "-arg", "--arg2", "argument"},
 		[]TokenType{CfOneDashWordAlphaNum, SemX2lktSwitch, SemEndOfOptions, SemOperand, SemOperand, SemOperand},
+	},
+}
+
+var testWthScheme = []testWithScheme{
+	{
+		[]string{"-option", "-long-option", "--", "-arg", "--arg2", "argument"},
+		[]TokenType{SemX2lktSwitch, SemX2lktSwitch, SemEndOfOptions, SemOperand, SemOperand, SemOperand},
+		OptSchemeXToolkitStrict,
+	},
+	{
+		[]string{"-xlf", "-p", "optionValue", "-q", "arg1", "arg2"},
+		[]TokenType{SemPosixStackedShortSwitches, CfOneDashLetter, CfWord, CfOneDashLetter, CfWord, SemOperand},
+		OptionSchemePOSIXStrict,
 	},
 }
 
@@ -42,8 +61,22 @@ func compareTokenArrays(tokens TokenList, types []TokenType) (isEqual bool, err 
 
 func TestParseArguments(t *testing.T) {
 
-	for i, test := range tests {
-		tokens := ParseArguments(test.arguments)
+	for i, test := range testCore {
+		tokens := ParseArguments(test.arguments, nil)
+		equal, err := compareTokenArrays(tokens, test.expectedTypes)
+		if !equal {
+			t.Errorf("Parsing test #%v error: %s\n\tArgs     : %v\n\tFound    : %s\n\tExpected : %v", i, err, test.arguments, tokens.MapToTypes(), test.expectedTypes)
+		}
+
+	}
+}
+
+func TestParseWithOptionScheme(t *testing.T) {
+
+	for i, test := range testWthScheme {
+		scheme := test.scheme
+		pim := NewProgramInterfaceModel(scheme, nil)
+		tokens := ParseArguments(test.arguments, pim)
 		equal, err := compareTokenArrays(tokens, test.expectedTypes)
 		if !equal {
 			t.Errorf("Parsing test #%v error: %s\n\tArgs     : %v\n\tFound    : %s\n\tExpected : %v", i, err, test.arguments, tokens.MapToTypes(), test.expectedTypes)

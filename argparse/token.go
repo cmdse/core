@@ -174,6 +174,19 @@ func (token *Token) InferPositional() {
 	}
 }
 
+func (token *Token) ReduceCandidatesWithScheme(scheme OptionScheme) {
+	candidates := token.semanticCandidates
+	var newCandidates []*SemanticTokenType
+	for _, candidate := range candidates {
+		for _, testVariant := range scheme {
+			if testVariant == candidate.Variant() || !candidate.PosModel().IsOptionFlag {
+				newCandidates = append(newCandidates, candidate)
+			}
+		}
+	}
+	token.semanticCandidates = newCandidates
+}
+
 func (token *Token) String() string {
 	semCandidateNames := make([]string, len(token.semanticCandidates))
 	for i, candidate := range token.semanticCandidates {

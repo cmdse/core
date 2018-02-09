@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	tokens := argparse.ParseArguments([]string{"-l", "-p", "--only", "argument"})
+	tokens := argparse.ParseArguments([]string{"-l", "-p", "--only", "argument"}, nil)
 	for _, token := range tokens {
 		fmt.Println(token)
 	}

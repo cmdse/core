@@ -39,7 +39,7 @@ func initTokens(args []string) TokenList {
 	return tokens
 }
 
-func ParseArguments(args []string) TokenList {
+func ParseArguments(args []string, programInterfaceModel *ProgramInterfaceModel) TokenList {
 	tokens := initTokens(args)
-	return tokens.Parse()
+	return tokens.Parse(programInterfaceModel)
 }

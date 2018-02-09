@@ -6,11 +6,15 @@ import (
 
 type TokenList []*Token
 
-func (tokens TokenList) Parse() TokenList {
+func (tokens TokenList) Parse(pim *ProgramInterfaceModel) TokenList {
 	previousConversions := 1
 	conversions := 1
 	tokens.CheckEndOfOptions()
-	for while := true; while; while = previousConversions != 0 && conversions != 0 {
+	lastTwoLoopsResultInConversion := func() bool { return previousConversions != 0 && conversions != 0 }
+	if scheme := pim.Scheme(); scheme != nil {
+		tokens.ReduceCandidatesWithScheme(scheme)
+	}
+	for while := true; while; while = lastTwoLoopsResultInConversion() {
 		previousConversions = conversions
 		conversions = 0
 		for _, token := range tokens {
@@ -29,6 +33,12 @@ func (tokens TokenList) Parse() TokenList {
 		}
 	}
 	return tokens
+}
+
+func (tokens TokenList) ReduceCandidatesWithScheme(scheme OptionScheme) {
+	for _, token := range tokens {
+		token.ReduceCandidatesWithScheme(scheme)
+	}
 }
 
 func (tokens TokenList) MapToTypes() []TokenType {
