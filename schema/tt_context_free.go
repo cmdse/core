@@ -106,13 +106,23 @@ var (
 		regexp: RegexTwoDashWord,
 		name:   "CfTwoDashWord",
 	}
-	CfWord = &ContextFreeTokenType{
+	CfOptWord = &ContextFreeTokenType{
 		SemanticCandidates: []*SemanticTokenType{
 			SemOperand,
 			SemPosixShortAssignmentValue,
 			SemGnuImplicitAssignmentValue,
 			SemX2lktImplicitAssignmentValue,
 			SemHeadlessOption,
+		},
+		regexp: RegexOptWord,
+		name:   "CfOptWord",
+	}
+	CfWord = &ContextFreeTokenType{
+		SemanticCandidates: []*SemanticTokenType{
+			SemOperand,
+			SemPosixShortAssignmentValue,
+			SemGnuImplicitAssignmentValue,
+			SemX2lktImplicitAssignmentValue,
 		},
 		name: "CfWord",
 	}
@@ -128,5 +138,6 @@ var ContextFreeTokenTypes = []*ContextFreeTokenType{
 	CfTwoDashWord,
 	CfOneDashLetter,
 	CfOneDashWord,
+	CfOptWord,
 	CfWord,
 }

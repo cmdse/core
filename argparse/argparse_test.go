@@ -41,7 +41,7 @@ var testWthScheme = []testWithScheme{
 	},
 	{
 		[]string{"-xlf", "-p", "optionValue", "-q", "arg1", "arg2"},
-		[]TokenType{SemPosixStackedShortSwitches, CfOneDashLetter, CfWord, CfOneDashLetter, CfWord, SemOperand},
+		[]TokenType{SemPosixStackedShortSwitches, CfOneDashLetter, CfOptWord, CfOneDashLetter, CfOptWord, SemOperand},
 		OptionSchemePOSIXStrict,
 	},
 }

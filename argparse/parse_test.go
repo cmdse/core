@@ -30,7 +30,7 @@ var expectedTokens = map[string]*ContextFreeTokenType{
 	"--long-option":       CfTwoDashWord,
 	"-_not_an_option":     CfWord,
 	"--_not_an_option":    CfWord,
-	"word":                CfWord,
+	"word":                CfOptWord,
 	"word with spaces":    CfWord,
 }
 
