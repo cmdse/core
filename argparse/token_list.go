@@ -14,6 +14,9 @@ func (tokens TokenList) Parse(pim *ProgramInterfaceModel) TokenList {
 	if scheme := pim.Scheme(); scheme != nil {
 		tokens.ReduceCandidatesWithScheme(scheme)
 	}
+	if descriptions := pim.Descriptions(); descriptions != nil {
+		tokens.MatchOptionDescription(descriptions)
+	}
 	for while := true; while; while = lastTwoLoopsResultInConversion() {
 		previousConversions = conversions
 		conversions = 0
@@ -57,6 +60,16 @@ func (tokens TokenList) CheckEndOfOptions() {
 				for rightIndex := index + 1; rightIndex < len(tokens); rightIndex++ {
 					(tokens)[rightIndex].setCandidate(SemOperand)
 				}
+			}
+		}
+	}
+}
+func (tokens TokenList) MatchOptionDescription(descriptions OptDescriptionModel) {
+	for _, token := range tokens {
+		if !token.IsSemantic() && token.IsOptionFlag() {
+			ttype := descriptions.MatchArgument(token.value)
+			if ttype != nil {
+				token.setCandidate(ttype)
 			}
 		}
 	}

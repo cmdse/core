@@ -40,7 +40,7 @@ func (tokenType *ContextFreeTokenType) Regexp() (*regexp.Regexp, bool) {
 var (
 	CfGnuExplicitAssignment = &ContextFreeTokenType{
 		SemanticCandidates: []*SemanticTokenType{
-			SemGnuExplicitAssignment,
+			SemGNUExplicitAssignment,
 		},
 		regexp: RegexGnuExplicitAssignment,
 		name:   "CfGnuExplicitAssignment",
@@ -68,22 +68,22 @@ var (
 	}
 	CfOneDashLetter = &ContextFreeTokenType{
 		SemanticCandidates: []*SemanticTokenType{
-			SemPosixShortAssignmentLeftSide,
-			SemPosixShortSwitch,
+			SemPOSIXShortAssignmentLeftSide,
+			SemPOSIXShortSwitch,
 		},
 		regexp: RegexOneDashLetter,
 		name:   "CfOneDashLetter",
 	}
 	CfPosixShortStickyValue = &ContextFreeTokenType{
 		SemanticCandidates: []*SemanticTokenType{
-			SemPosixShortStickyValue,
+			SemPOSIXShortStickyValue,
 		},
 		regexp: RegexPosixShortStickyValue,
 		name:   "CfPosixShortStickyValue",
 	}
 	CfOneDashWordAlphaNum = &ContextFreeTokenType{
 		SemanticCandidates: []*SemanticTokenType{
-			SemPosixStackedShortSwitches,
+			SemPOSIXStackedShortSwitches,
 			SemX2lktSwitch,
 			SemX2lktImplicitAssignmentLeftSide,
 		},
@@ -100,8 +100,8 @@ var (
 	}
 	CfTwoDashWord = &ContextFreeTokenType{
 		SemanticCandidates: []*SemanticTokenType{
-			SemGnuSwitch,
-			SemGnuImplicitAssignmentLeftSide,
+			SemGNUSwitch,
+			SemGNUImplicitAssignmentLeftSide,
 		},
 		regexp: RegexTwoDashWord,
 		name:   "CfTwoDashWord",
@@ -109,8 +109,8 @@ var (
 	CfOptWord = &ContextFreeTokenType{
 		SemanticCandidates: []*SemanticTokenType{
 			SemOperand,
-			SemPosixShortAssignmentValue,
-			SemGnuImplicitAssignmentValue,
+			SemPOSIXShortAssignmentValue,
+			SemGNUImplicitAssignmentValue,
 			SemX2lktImplicitAssignmentValue,
 			SemHeadlessOption,
 		},
@@ -120,8 +120,8 @@ var (
 	CfWord = &ContextFreeTokenType{
 		SemanticCandidates: []*SemanticTokenType{
 			SemOperand,
-			SemPosixShortAssignmentValue,
-			SemGnuImplicitAssignmentValue,
+			SemPOSIXShortAssignmentValue,
+			SemGNUImplicitAssignmentValue,
 			SemX2lktImplicitAssignmentValue,
 		},
 		name: "CfWord",

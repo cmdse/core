@@ -17,16 +17,22 @@ type testWithScheme struct {
 	scheme        OptionScheme
 }
 
+type testWithDescrModel struct {
+	arguments        []string
+	expectedTypes    []TokenType
+	descriptionModel OptDescriptionModel
+}
+
 var testCore = []simpleTest{
 	{
 		[]string{"-l", "-p", "--only", "argument"},
-		[]TokenType{SemPosixShortSwitch, SemPosixShortSwitch, SemGnuSwitch, SemOperand},
+		[]TokenType{SemPOSIXShortSwitch, SemPOSIXShortSwitch, SemGNUSwitch, SemOperand},
 	}, {
 		[]string{"-l", "--po=TOTO_to", "--only", "argument"},
-		[]TokenType{SemPosixShortSwitch, SemGnuExplicitAssignment, SemGnuSwitch, SemOperand},
+		[]TokenType{SemPOSIXShortSwitch, SemGNUExplicitAssignment, SemGNUSwitch, SemOperand},
 	}, {
 		[]string{"--po=TOTO_to", "SemOperand", "--only", "argument"},
-		[]TokenType{SemGnuExplicitAssignment, SemOperand, SemGnuSwitch, SemOperand},
+		[]TokenType{SemGNUExplicitAssignment, SemOperand, SemGNUSwitch, SemOperand},
 	}, {
 		[]string{"-option", "-long-option", "--", "-arg", "--arg2", "argument"},
 		[]TokenType{CfOneDashWordAlphaNum, SemX2lktSwitch, SemEndOfOptions, SemOperand, SemOperand, SemOperand},
@@ -41,8 +47,35 @@ var testWthScheme = []testWithScheme{
 	},
 	{
 		[]string{"-xlf", "-p", "optionValue", "-q", "arg1", "arg2"},
-		[]TokenType{SemPosixStackedShortSwitches, CfOneDashLetter, CfOptWord, CfOneDashLetter, CfOptWord, SemOperand},
+		[]TokenType{SemPOSIXStackedShortSwitches, CfOneDashLetter, CfOptWord, CfOneDashLetter, CfOptWord, SemOperand},
 		OptionSchemePOSIXStrict,
+	},
+}
+
+var testWithOpDescr = []testWithDescrModel{
+	{
+		[]string{"-x", "-p", "optionValue", "-q", "arg1", "arg2"},
+		[]TokenType{SemPOSIXShortSwitch, SemPOSIXShortAssignmentLeftSide, SemPOSIXShortAssignmentValue, SemPOSIXShortSwitch, SemOperand, SemOperand},
+		OptDescriptionModel{
+			&OptDescription{
+				"execute",
+				[]*MatchModel{
+					NewSimpleMatchModel(VariantPOSIXShortSwitch, "x"),
+				},
+			},
+			&OptDescription{
+				"parse",
+				[]*MatchModel{
+					NewSimpleMatchModel(VariantPOSIXShortAssignment, "p"),
+				},
+			},
+			&OptDescription{
+				"query",
+				[]*MatchModel{
+					NewSimpleMatchModel(VariantPOSIXShortSwitch, "q"),
+				},
+			},
+		},
 	},
 }
 
@@ -76,6 +109,20 @@ func TestParseWithOptionScheme(t *testing.T) {
 	for i, test := range testWthScheme {
 		scheme := test.scheme
 		pim := NewProgramInterfaceModel(scheme, nil)
+		tokens := ParseArguments(test.arguments, pim)
+		equal, err := compareTokenArrays(tokens, test.expectedTypes)
+		if !equal {
+			t.Errorf("Parsing test #%v error: %s\n\tArgs     : %v\n\tFound    : %s\n\tExpected : %v", i, err, test.arguments, tokens.MapToTypes(), test.expectedTypes)
+		}
+
+	}
+}
+
+func TestParseWithOptionDescriptionModel(t *testing.T) {
+
+	for i, test := range testWithOpDescr {
+		descriptionModel := test.descriptionModel
+		pim := NewProgramInterfaceModel(nil, descriptionModel)
 		tokens := ParseArguments(test.arguments, pim)
 		equal, err := compareTokenArrays(tokens, test.expectedTypes)
 		if !equal {

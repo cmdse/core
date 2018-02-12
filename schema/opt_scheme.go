@@ -17,6 +17,7 @@ var (
 		VariantPOSIXShortSwitch,
 		VariantPOSIXStackedShortSwitches,
 		VariantPOSIXShortAssignment,
+		VariantEndOfOptions,
 	}
 	OptSchemeLinuxStandard = OptionScheme{
 		VariantPOSIXShortSwitch,

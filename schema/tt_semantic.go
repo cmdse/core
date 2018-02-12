@@ -9,6 +9,23 @@ type SemanticTokenType struct {
 	style   OptionStyle
 }
 
+func NewSemanticTokenType(posModel *PositionalModel, name string, variant *OptExpressionVariant, style OptionStyle) *SemanticTokenType {
+	ttype := &SemanticTokenType{
+		posModel,
+		name,
+		variant,
+		style,
+	}
+	if variant != nil {
+		if posModel.IsOptionFlag {
+			variant.flagTokenType = ttype
+		} else { // is Option Value
+			variant.optValueTokenType = ttype
+		}
+	}
+	return ttype
+}
+
 func (tokenType *SemanticTokenType) IsSemantic() bool {
 	return tokenType.PosModel().IsSemantic
 }
@@ -35,129 +52,129 @@ func (tokenType *SemanticTokenType) Equal(comparedTType TokenType) bool {
 
 var (
 	// Posix
-	SemPosixShortSwitch = &SemanticTokenType{
-		posModel: PosModOptSwitch,
-		name:     "SemPosixShortSwitch",
-		variant:  VariantPOSIXShortSwitch,
-		style:    OptStylePOSIX,
-	}
-	SemPosixStackedShortSwitches = &SemanticTokenType{
-		posModel: PosModOptSwitch,
-		name:     "SemPosixStackedShortSwitches",
-		variant:  VariantPOSIXStackedShortSwitches,
-		style:    OptStylePOSIX,
-	}
-	SemPosixShortAssignmentLeftSide = &SemanticTokenType{
-		posModel: PosModOptImplicitAssignmentLeftSide,
-		name:     "SemPosixShortAssignmentLeftSide",
-		variant:  VariantPOSIXShortAssignment,
-		style:    OptStylePOSIX,
-	}
-	SemPosixShortAssignmentValue = &SemanticTokenType{
-		posModel: PosModOptImplicitAssignmentValue,
-		name:     "SemPosixShortAssignmentValue",
-		variant:  VariantPOSIXShortAssignment,
-		style:    OptStylePOSIX,
-	}
-	SemPosixShortStickyValue = &SemanticTokenType{
-		posModel: PosModStandaloneOptAssignment,
-		name:     "SemPosixShortStickyValue",
-		variant:  VariantPOSIXShortStickyValue,
-		style:    OptStylePOSIX,
-	}
+	SemPOSIXShortSwitch = NewSemanticTokenType(
+		PosModOptSwitch,
+		"SemPOSIXShortSwitch",
+		VariantPOSIXShortSwitch,
+		OptStylePOSIX,
+	)
+	SemPOSIXStackedShortSwitches = NewSemanticTokenType(
+		PosModOptSwitch,
+		"SemPOSIXStackedShortSwitches",
+		VariantPOSIXStackedShortSwitches,
+		OptStylePOSIX,
+	)
+	SemPOSIXShortAssignmentLeftSide = NewSemanticTokenType(
+		PosModOptImplicitAssignmentLeftSide,
+		"SemPOSIXShortAssignmentLeftSide",
+		VariantPOSIXShortAssignment,
+		OptStylePOSIX,
+	)
+	SemPOSIXShortAssignmentValue = NewSemanticTokenType(
+		PosModOptImplicitAssignmentValue,
+		"SemPOSIXShortAssignmentValue",
+		VariantPOSIXShortAssignment,
+		OptStylePOSIX,
+	)
+	SemPOSIXShortStickyValue = NewSemanticTokenType(
+		PosModStandaloneOptAssignment,
+		"SemPOSIXShortStickyValue",
+		VariantPOSIXShortStickyValue,
+		OptStylePOSIX,
+	)
 	// GNU
-	SemGnuSwitch = &SemanticTokenType{
-		posModel: PosModOptSwitch,
-		name:     "SemGnuSwitch",
-		variant:  VariantGNUSwitch,
-		style:    OptStyleGNU,
-	}
-	SemGnuExplicitAssignment = &SemanticTokenType{
-		posModel: PosModStandaloneOptAssignment,
-		name:     "SemGnuExplicitAssignment",
-		variant:  VariantGNUExplicitAssignment,
-		style:    OptStyleGNU,
-	}
-	SemGnuImplicitAssignmentLeftSide = &SemanticTokenType{
-		posModel: PosModOptImplicitAssignmentLeftSide,
-		name:     "SemGnuImplicitAssignmentLeftSide",
-		variant:  VariantGNUImplicitAssignment,
-		style:    OptStyleGNU,
-	}
-	SemGnuImplicitAssignmentValue = &SemanticTokenType{
-		posModel: PosModOptImplicitAssignmentValue,
-		name:     "SemGnuImplicitAssignmentValue",
-		variant:  VariantGNUImplicitAssignment,
-		style:    OptStyleGNU,
-	}
+	SemGNUSwitch = NewSemanticTokenType(
+		PosModOptSwitch,
+		"SemGNUSwitch",
+		VariantGNUSwitch,
+		OptStyleGNU,
+	)
+	SemGNUExplicitAssignment = NewSemanticTokenType(
+		PosModStandaloneOptAssignment,
+		"SemGNUExplicitAssignment",
+		VariantGNUExplicitAssignment,
+		OptStyleGNU,
+	)
+	SemGNUImplicitAssignmentLeftSide = NewSemanticTokenType(
+		PosModOptImplicitAssignmentLeftSide,
+		"SemGNUImplicitAssignmentLeftSide",
+		VariantGNUImplicitAssignment,
+		OptStyleGNU,
+	)
+	SemGNUImplicitAssignmentValue = NewSemanticTokenType(
+		PosModOptImplicitAssignmentValue,
+		"SemGNUImplicitAssignmentValue",
+		VariantGNUImplicitAssignment,
+		OptStyleGNU,
+	)
 	// X-Toolkit
-	SemX2lktSwitch = &SemanticTokenType{
-		posModel: PosModOptSwitch,
-		name:     "SemX2lktSwitch",
-		variant:  VariantX2lktSwitch,
-		style:    OptStyleXToolkit,
-	}
-	SemX2lktReverseSwitch = &SemanticTokenType{
-		posModel: PosModOptSwitch,
-		name:     "SemX2lktReverseSwitch",
-		variant:  VariantX2lktReverseSwitch,
-		style:    OptStyleXToolkit,
-	}
-	SemX2lktExplicitAssignment = &SemanticTokenType{
-		posModel: PosModStandaloneOptAssignment,
-		name:     "SemX2lktExplicitAssignment",
-		variant:  VariantX2lktExplicitAssignment,
-		style:    OptStyleXToolkit,
-	}
-	SemX2lktImplicitAssignmentLeftSide = &SemanticTokenType{
-		posModel: PosModOptImplicitAssignmentLeftSide,
-		name:     "SemX2lktImplicitAssignmentLeftSide",
-		variant:  VariantX2lktImplicitAssignment,
-		style:    OptStyleXToolkit,
-	}
-	SemX2lktImplicitAssignmentValue = &SemanticTokenType{
-		posModel: PosModOptImplicitAssignmentValue,
-		name:     "SemX2lktImplicitAssignmentValue",
-		variant:  VariantX2lktImplicitAssignment,
-		style:    OptStyleXToolkit,
-	}
+	SemX2lktSwitch = NewSemanticTokenType(
+		PosModOptSwitch,
+		"SemX2lktSwitch",
+		VariantX2lktSwitch,
+		OptStyleXToolkit,
+	)
+	SemX2lktReverseSwitch = NewSemanticTokenType(
+		PosModOptSwitch,
+		"SemX2lktReverseSwitch",
+		VariantX2lktReverseSwitch,
+		OptStyleXToolkit,
+	)
+	SemX2lktExplicitAssignment = NewSemanticTokenType(
+		PosModStandaloneOptAssignment,
+		"SemX2lktExplicitAssignment",
+		VariantX2lktExplicitAssignment,
+		OptStyleXToolkit,
+	)
+	SemX2lktImplicitAssignmentLeftSide = NewSemanticTokenType(
+		PosModOptImplicitAssignmentLeftSide,
+		"SemX2lktImplicitAssignmentLeftSide",
+		VariantX2lktImplicitAssignment,
+		OptStyleXToolkit,
+	)
+	SemX2lktImplicitAssignmentValue = NewSemanticTokenType(
+		PosModOptImplicitAssignmentValue,
+		"SemX2lktImplicitAssignmentValue",
+		VariantX2lktImplicitAssignment,
+		OptStyleXToolkit,
+	)
 	// Special tokens
-	SemEndOfOptions = &SemanticTokenType{
-		posModel: PosModOptSwitch,
-		name:     "SemEndOfOptions",
-		variant:  VariantEndOfOptions,
-		style:    OptStyleNone,
-	}
-	SemOperand = &SemanticTokenType{
-		posModel: PosModCommandOperand,
-		name:     "SemOperand",
-		variant:  nil,
-		style:    OptStyleNone,
-	}
-	SemHeadlessOption = &SemanticTokenType{
-		posModel: PosModOptSwitch,
-		name:     "SemHeadlessOption",
-		variant:  VariantHeadlessOption,
-		style:    OptStyleOld,
-	}
+	SemEndOfOptions = NewSemanticTokenType(
+		PosModOptSwitch,
+		"SemEndOfOptions",
+		VariantEndOfOptions,
+		OptStyleNone,
+	)
+	SemOperand = NewSemanticTokenType(
+		PosModCommandOperand,
+		"SemOperand",
+		nil,
+		OptStyleNone,
+	)
+	SemHeadlessOption = NewSemanticTokenType(
+		PosModOptSwitch,
+		"SemHeadlessOption",
+		VariantHeadlessOption,
+		OptStyleOld,
+	)
 )
 
 var SemanticTokenTypes = []*SemanticTokenType{
 	SemEndOfOptions,
-	SemGnuExplicitAssignment,
-	SemGnuImplicitAssignmentLeftSide,
-	SemGnuImplicitAssignmentValue,
-	SemGnuSwitch,
+	SemGNUExplicitAssignment,
+	SemGNUImplicitAssignmentLeftSide,
+	SemGNUImplicitAssignmentValue,
+	SemGNUSwitch,
 	SemX2lktSwitch,
 	SemX2lktReverseSwitch,
 	SemX2lktExplicitAssignment,
 	SemX2lktImplicitAssignmentLeftSide,
 	SemX2lktImplicitAssignmentValue,
-	SemPosixShortAssignmentLeftSide,
-	SemPosixShortAssignmentValue,
-	SemPosixShortStickyValue,
-	SemPosixShortSwitch,
-	SemPosixStackedShortSwitches,
+	SemPOSIXShortAssignmentLeftSide,
+	SemPOSIXShortAssignmentValue,
+	SemPOSIXShortStickyValue,
+	SemPOSIXShortSwitch,
+	SemPOSIXStackedShortSwitches,
 	SemHeadlessOption,
 	SemOperand,
 }
