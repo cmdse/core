@@ -7,7 +7,7 @@ import (
 
 var _ = Describe("ParametricRegexBuilder", func() {
 
-	Describe("assembleString func", func() {
+	Describe("assembleString method", func() {
 		It("should assemble provided flag and param", func() {
 			regextest := &ParametricRegexBuilder{
 				`^--(%s)=(%s)$`,
@@ -18,7 +18,7 @@ var _ = Describe("ParametricRegexBuilder", func() {
 			Expect(answer).To(Equal(`^--(N)=(P)$`))
 		})
 	})
-	Describe("BuildDefault func", func() {
+	Describe("BuildDefault method", func() {
 		It("should assemble inner flag and inner param into a regex", func() {
 			regextest := &ParametricRegexBuilder{
 				`^--(%s)=(%s)$`,
@@ -29,7 +29,7 @@ var _ = Describe("ParametricRegexBuilder", func() {
 			Expect(answer.MatchString(`--A=B`)).To(BeTrue())
 		})
 	})
-	Describe("Build func", func() {
+	Describe("Build method", func() {
 		It("should assemble provided flag and param into a regex", func() {
 			regextest := &ParametricRegexBuilder{
 				`^--(%s)=(%s)$`,

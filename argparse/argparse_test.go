@@ -23,8 +23,8 @@ func compareTokenArrays(tokens TokenList, types []TokenType, args []string) (boo
 	return true, ""
 }
 
-var _ = Describe("ParseArguments func", func() {
-	Context("when provided with no pim", func() {
+var _ = Describe("ParseArguments method", func() {
+	When("provided with no pim", func() {
 		DescribeTable("token output",
 			func(vararg []string, expected []TokenType) {
 				tokens := ParseArguments(vararg, nil)
@@ -49,7 +49,7 @@ var _ = Describe("ParseArguments func", func() {
 			),
 		)
 	})
-	Context("when provided with program option scheme", func() {
+	When("provided with program option scheme", func() {
 		DescribeTable("token output",
 			func(vararg []string, expected []TokenType, scheme OptionScheme) {
 				pim := NewProgramInterfaceModel(scheme, nil)
@@ -69,7 +69,7 @@ var _ = Describe("ParseArguments func", func() {
 			),
 		)
 	})
-	Context("when provided with program description model", func() {
+	When("provided with program description model", func() {
 		DescribeTable("token output",
 			func(vararg []string, expected []TokenType, descriptionModel OptDescriptionModel) {
 				pim := NewProgramInterfaceModel(nil, descriptionModel)

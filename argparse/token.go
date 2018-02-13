@@ -65,6 +65,11 @@ func (token *Token) setCandidate(tokenType *SemanticTokenType) {
 	token.possiblyConvertToSemantic()
 }
 
+func (token *Token) setCandidates(tokenTypes []*SemanticTokenType) {
+	token.semanticCandidates = tokenTypes
+	token.possiblyConvertToSemantic()
+}
+
 func (token *Token) IsBoundTo(binding Binding) bool {
 	ttype := token.ttype
 	if ttype.PosModel().Equal(PosModUnset) {

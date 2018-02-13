@@ -7,12 +7,12 @@ import (
 )
 
 var _ = Describe("Token", func() {
-	Describe("IsBoundToOneOf func", func() {
+	Describe("IsBoundToOneOf method", func() {
 		var tokens = TokenList{}
 		var tokenType TokenType = CfOneDashWord
 		token := NewToken(0, tokenType, "-option", tokens)
 		tokens = append(tokens, token)
-		When("when token type is context-free", func() {
+		When("token type is context-free", func() {
 			Context("and its semantic candidates are bound 'None' and 'Right'", func() {
 				Context("and provided bindings are 'None' and 'Right'", func() {
 					boundNoneOrRight := token.IsBoundToOneOf(Bindings{BindNone, BindRight})
@@ -34,7 +34,7 @@ var _ = Describe("Token", func() {
 				})
 			})
 		})
-		When("when token type is semantic and bound 'None'", func() {
+		When("token type is semantic and bound 'None'", func() {
 			var tokens = TokenList{}
 			var tokenType TokenType = SemX2lktSwitch
 			token := NewToken(0, tokenType, "-option", tokens)
@@ -54,37 +54,37 @@ var _ = Describe("Token", func() {
 		})
 
 	})
-	Describe("IsBoundTo func", func() {
+	Describe("IsBoundTo method", func() {
 		var tokens = TokenList{}
 		var tokenType TokenType = CfEndOfOptions
 		token := NewToken(0, tokenType, "--", tokens)
 		tokens = append(tokens, token)
-		Context("when token type is semantic and bound to 'none'", func() {
-			When("and provided binding is 'None'", func() {
+		When("token type is semantic and bound to 'none'", func() {
+			Context("and provided binding is 'None'", func() {
 				It("should return true", func() {
 					boundToNone := token.IsBoundTo(BindNone)
 					Expect(boundToNone).To(BeTrue())
 				})
 			})
-			When("and provided binding is 'Left'", func() {
+			Context("and provided binding is 'Left'", func() {
 				It("should return false", func() {
 					boundToLeft := token.IsBoundTo(BindLeft)
 					Expect(boundToLeft).To(BeFalse())
 				})
 			})
 		})
-		Context("when token type is context-free and its semantic candidates are bound to 'None'", func() {
+		When("token type is context-free and its semantic candidates are bound to 'None'", func() {
 			var tokens = TokenList{}
 			var tokenType TokenType = CfEndOfOptions
 			token := NewToken(0, tokenType, "-test", tokens)
 			tokens = append(tokens, token)
-			When("when provided with 'None' binding", func() {
+			When("provided with 'None' binding", func() {
 				It("should return true", func() {
 					boundToNone := token.IsBoundTo(BindNone)
 					Expect(boundToNone).To(BeTrue())
 				})
 			})
-			When("when provided with 'Left' binding", func() {
+			When("provided with 'Left' binding", func() {
 				It("should return false", func() {
 					boundToLeft := token.IsBoundTo(BindLeft)
 					Expect(boundToLeft).To(BeFalse())
@@ -93,8 +93,8 @@ var _ = Describe("Token", func() {
 
 		})
 	})
-	Describe("IsOptionPart func", func() {
-		When("when token is context free and its semantic candidates are option parts", func() {
+	Describe("IsOptionPart method", func() {
+		When("token is context free and its semantic candidates are option parts", func() {
 			var tokens = TokenList{}
 			var tokenType TokenType = CfOneDashWord
 			token := NewToken(0, tokenType, "-test", tokens)
@@ -104,7 +104,7 @@ var _ = Describe("Token", func() {
 				Expect(isOption).To(BeTrue())
 			})
 		})
-		When("when token is semantic and option part", func() {
+		When("token is semantic and option part", func() {
 			var tokens = TokenList{}
 			var tokenType TokenType = SemX2lktExplicitAssignment
 			token := NewToken(0, tokenType, "-opt=value", tokens)
@@ -115,8 +115,8 @@ var _ = Describe("Token", func() {
 			})
 		})
 	})
-	Describe("IsOptionFlag func", func() {
-		When("when token is context free and its semantic candidates are option flags", func() {
+	Describe("IsOptionFlag method", func() {
+		When("token is context free and its semantic candidates are option flags", func() {
 			var tokens = TokenList{}
 			var tokenType TokenType = CfEndOfOptions
 			token := NewToken(0, tokenType, "--", tokens)
@@ -126,7 +126,7 @@ var _ = Describe("Token", func() {
 				Expect(isOption).To(BeTrue())
 			})
 		})
-		When("when token is semantics and is option flag", func() {
+		When("token is semantics and is option flag", func() {
 			var tokens = TokenList{}
 			var tokenType TokenType = SemX2lktExplicitAssignment
 			token := NewToken(0, tokenType, "-opt=value", tokens)
@@ -137,19 +137,19 @@ var _ = Describe("Token", func() {
 			})
 		})
 	})
-	Describe("String func", func() {
+	Describe("String method", func() {
 		token := NewToken(0, CfTwoDashWord, "--two-dash", nil)
 		It("should return a string", func() {
 			Expect(token.String()).To(BeAssignableToTypeOf(""))
 		})
 	})
-	Describe("MapToTypes func", func() {
+	Describe("MapToTypes method", func() {
 		var tokens = TokenList{}
 		tokens = append(tokens, NewToken(0, CfEndOfOptions, "--", tokens))
 		tokens = append(tokens, NewToken(0, SemX2lktExplicitAssignment, "-opt=value", tokens))
 		It("should return a list of token types", func() {
 			Expect(tokens.MapToTypes()).To(BeAssignableToTypeOf([]TokenType{}))
-			Expect(tokens.MapToTypes()).To(Equal([]TokenType{CfEndOfOptions, SemX2lktExplicitAssignment}))
+			Expect(tokens.MapToTypes()).To(ConsistOf(CfEndOfOptions, SemX2lktExplicitAssignment))
 		})
 	})
 })

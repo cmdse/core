@@ -7,7 +7,7 @@ import (
 )
 
 var _ = Describe("Bindings", func() {
-	Describe("Contains func", func() {
+	Describe("Contains method", func() {
 		bindings := Bindings{BindLeft, BindRight}
 		It("should return true when provided binding was given at initialization", func() {
 			Expect(bindings.Contains(BindLeft)).To(BeTrue())

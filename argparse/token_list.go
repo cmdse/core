@@ -67,9 +67,9 @@ func (tokens TokenList) CheckEndOfOptions() {
 func (tokens TokenList) MatchOptionDescription(descriptions OptDescriptionModel) {
 	for _, token := range tokens {
 		if !token.IsSemantic() && token.IsOptionFlag() {
-			ttype := descriptions.MatchArgument(token.value)
-			if ttype != nil {
-				token.setCandidate(ttype)
+			types := descriptions.MatchArgument(token.value)
+			if types != nil {
+				token.setCandidates(types)
 			}
 		}
 	}

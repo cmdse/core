@@ -7,8 +7,8 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("ParseArgument", func() {
-	DescribeTable("ParseArgument output",
+var _ = Describe("ParseArgument function", func() {
+	DescribeTable("output",
 		func(arg string, ttype *ContextFreeTokenType) {
 			Expect(ParseArgument(arg).Name()).To(Equal(ttype.Name()))
 		},
