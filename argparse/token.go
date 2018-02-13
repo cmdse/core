@@ -160,11 +160,6 @@ func (token *Token) InferLeft() {
 				switch ttype := leftNeighbour.ttype.(type) {
 				case *SemanticTokenType:
 					token.setCandidate(ttype.Variant().OptValueTokenType())
-				default:
-					// Remove any not bound to left
-					token.reduceCandidates(func(tokenType *SemanticTokenType) bool {
-						return tokenType.PosModel().Binding == BindLeft
-					})
 				}
 			}
 		}

@@ -5,17 +5,20 @@ import (
 )
 
 func ParseArgument(arg string) *ContextFreeTokenType {
+	var fetchedType *ContextFreeTokenType
 	for _, ttype := range ContextFreeTokenTypes {
 		regex, isMatchAll := ttype.Regexp()
 		if isMatchAll {
-			return ttype
+			fetchedType = ttype
+			break
 		} else {
 			if regex.MatchString(arg) {
-				return ttype
+				fetchedType = ttype
+				break
 			}
 		}
 	}
-	return nil
+	return fetchedType
 }
 
 func initTokens(args []string) TokenList {
