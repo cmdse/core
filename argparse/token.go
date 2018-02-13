@@ -17,6 +17,24 @@ type Token struct {
 	semanticCandidates []*SemanticTokenType
 }
 
+func NewToken(argumentPosition int, ttype TokenType, value string, tokens TokenList) *Token {
+	semanticCandidates := []*SemanticTokenType{}
+	switch nutype := ttype.(type) {
+	case *ContextFreeTokenType:
+		semanticCandidates = make([]*SemanticTokenType, len(nutype.SemanticCandidates))
+		copy(semanticCandidates, nutype.SemanticCandidates)
+	}
+	return &Token{
+		argumentPosition,
+		ttype,
+		value,
+		nil,
+		tokens,
+		semanticCandidates,
+	}
+
+}
+
 func (token *Token) possiblyConvertToSemantic() {
 	if len(token.semanticCandidates) == 1 {
 		var semanticType = token.semanticCandidates[0]

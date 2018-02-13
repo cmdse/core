@@ -23,17 +23,8 @@ func initTokens(args []string) TokenList {
 	for i, arg := range args {
 		contextFreeTType := ParseArgument(arg)
 		var tokenType TokenType = contextFreeTType
-		var semanticCandidates = make([]*SemanticTokenType, len(contextFreeTType.SemanticCandidates))
-		copy(semanticCandidates, contextFreeTType.SemanticCandidates)
-		token := Token{
-			argumentPosition:   i,
-			ttype:              tokenType,
-			value:              arg,
-			boundTo:            nil,
-			semanticCandidates: semanticCandidates,
-			tokens:             tokens,
-		}
-		tokens[i] = &token
+		token := NewToken(i, tokenType, arg, tokens)
+		tokens[i] = token
 		token.possiblyConvertToSemantic()
 	}
 	return tokens

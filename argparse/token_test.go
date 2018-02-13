@@ -2,118 +2,107 @@ package argparse
 
 import (
 	. "cmdse-cli/schema"
-	"testing"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 )
 
-func TestToken_IsBoundToOneOfCF(t *testing.T) {
-	// Test with a context-free type
-	var tokens = TokenList{}
-	var tokenType TokenType = CfOneDashWord
-	token := Token{
-		argumentPosition:   0,
-		ttype:              tokenType,
-		tokens:             tokens,
-		semanticCandidates: CfOneDashWord.SemanticCandidates,
-		boundTo:            nil,
-		value:              "-option",
-	}
-	tokens = append(tokens, &token)
-	boundNoneOrRight := token.IsBoundToOneOf(Bindings{BindNone, BindRight})
-	if !boundNoneOrRight {
-		t.Errorf("token should be bound BindNone or BindRight")
-	}
+var _ = Describe("Token", func() {
+	Describe("IsBoundToOneOf func", func() {
+		var tokens = TokenList{}
+		var tokenType TokenType = CfOneDashWord
+		token := NewToken(0, tokenType, "-option", tokens)
+		tokens = append(tokens, token)
+		Context("when token type is context-free", func() {
+			Context("and its semantic candidates are bound 'None' and 'Right'", func() {
+				Context("and provided bindings are 'None' and 'Right'", func() {
+					boundNoneOrRight := token.IsBoundToOneOf(Bindings{BindNone, BindRight})
+					It("should return true", func() {
+						Expect(boundNoneOrRight).To(BeTrue())
+					})
+				})
+				Context("and provided binding are 'None' and 'Left'", func() {
+					boundNoneOrLeft := token.IsBoundToOneOf(Bindings{BindNone, BindLeft})
+					It("should return false", func() {
+						Expect(boundNoneOrLeft).To(BeFalse())
+					})
+				})
+				Context("and provided bindings are 'Unknown' and 'Left'", func() {
+					boundUnknownOrLeft := token.IsBoundToOneOf(Bindings{BindUnknown, BindLeft})
+					It("should return false", func() {
+						Expect(boundUnknownOrLeft).To(BeFalse())
+					})
+				})
+			})
+		})
+		Context("when token type is semantic and bound 'None'", func() {
+			var tokens = TokenList{}
+			var tokenType TokenType = SemX2lktSwitch
+			token := NewToken(0, tokenType, "-option", tokens)
+			tokens = append(tokens, token)
+			Context("and provided bindings are 'None' and 'Left'", func() {
+				boundToNoneOrLeft := token.IsBoundToOneOf(Bindings{BindNone, BindLeft})
+				It("should return true", func() {
+					Expect(boundToNoneOrLeft).To(BeTrue())
+				})
+			})
+			Context("and provided bindings are 'Unknown' and 'Right'", func() {
+				boundToUnknownOrRight := token.IsBoundToOneOf(Bindings{BindUnknown, BindRight})
+				It("should return false", func() {
+					Expect(boundToUnknownOrRight).To(BeFalse())
+				})
+			})
+		})
 
-	boundNoneOrLeft := token.IsBoundToOneOf(Bindings{BindNone, BindLeft})
-	if boundNoneOrLeft {
-		t.Errorf("token should not be bound BindNone or BindLeft")
-	}
-	boundUnknownOrLeft := token.IsBoundToOneOf(Bindings{BindUnknown, BindLeft})
-	if boundUnknownOrLeft {
-		t.Errorf("token should not be bound BindUnknown or BindLeft")
-	}
-}
+	})
+	Describe("IsBoundTo func", func() {
+		var tokens = TokenList{}
+		var tokenType TokenType = CfEndOfOptions
+		token := NewToken(0, tokenType, "--", tokens)
+		tokens = append(tokens, token)
+		Context("when token type is semantic and bound to 'none'", func() {
+			Context("and provided binding is 'None'", func() {
+				It("should return true", func() {
+					boundToNone := token.IsBoundTo(BindNone)
+					Expect(boundToNone).To(BeTrue())
+				})
+			})
+			Context("and provided binding is 'Left'", func() {
+				It("should return false", func() {
+					boundToLeft := token.IsBoundTo(BindLeft)
+					Expect(boundToLeft).To(BeFalse())
+				})
+			})
+		})
+		Context("when token type is context-free and its semantic candidates are bound to 'None'", func() {
+			var tokens = TokenList{}
+			var tokenType TokenType = CfEndOfOptions
+			token := NewToken(0, tokenType, "-test", tokens)
+			tokens = append(tokens, token)
+			Describe("when provided with 'None' binding", func() {
+				It("should return true", func() {
+					boundToNone := token.IsBoundTo(BindNone)
+					Expect(boundToNone).To(BeTrue())
+				})
+			})
+			Describe("when provided with 'Left' binding", func() {
+				It("should return false", func() {
+					boundToLeft := token.IsBoundTo(BindLeft)
+					Expect(boundToLeft).To(BeFalse())
+				})
+			})
 
-func TestToken_IsBoundToOneOfSem(t *testing.T) {
-	// test with a semantic token
-	var tokens = TokenList{}
-	var tokenType TokenType = SemX2lktSwitch
-	token := Token{
-		argumentPosition:   0,
-		ttype:              tokenType,
-		tokens:             tokens,
-		semanticCandidates: []*SemanticTokenType{},
-		boundTo:            nil,
-		value:              "-option",
-	}
-	tokens = append(tokens, &token)
-	boundToNoneOrLeft := token.IsBoundToOneOf(Bindings{BindNone, BindLeft})
-	if !boundToNoneOrLeft {
-		t.Errorf("token should be bound BindNone or BindLeft")
-	}
-	boundToUnknownOrRight := token.IsBoundToOneOf(Bindings{BindUnknown, BindRight})
-	if boundToUnknownOrRight {
-		t.Errorf("token should not be bound BindUnknown or BindRight")
-	}
-}
-
-func TestToken_IsBoundToSem(t *testing.T) {
-	var tokens = TokenList{}
-	var tokenType TokenType = SemX2lktSwitch
-	token := Token{
-		argumentPosition:   0,
-		ttype:              tokenType,
-		tokens:             tokens,
-		semanticCandidates: []*SemanticTokenType{},
-		boundTo:            nil,
-		value:              "-option",
-	}
-	tokens = append(tokens, &token)
-	boundToNone := token.IsBoundTo(BindNone)
-	if !boundToNone {
-		t.Errorf("token should be bound BindNone")
-	}
-	boundToRight := token.IsBoundTo(BindRight)
-	if boundToRight {
-		t.Errorf("token should not be bound BindRight")
-	}
-}
-
-func TestToken_IsBoundToCF(t *testing.T) {
-	var tokens = TokenList{}
-	var tokenType TokenType = CfEndOfOptions
-	token := Token{
-		argumentPosition:   0,
-		ttype:              tokenType,
-		tokens:             tokens,
-		semanticCandidates: CfEndOfOptions.SemanticCandidates,
-		boundTo:            nil,
-		value:              "--",
-	}
-	tokens = append(tokens, &token)
-	boundToNone := token.IsBoundTo(BindNone)
-	if !boundToNone {
-		t.Errorf("token should be bound BindNone")
-	}
-	boundToLeft := token.IsBoundTo(BindLeft)
-	if boundToLeft {
-		t.Errorf("token should not be bound BindLeft")
-	}
-}
-
-func TestToken_IsOption(t *testing.T) {
-	var tokens = TokenList{}
-	var tokenType TokenType = CfOneDashWord
-	token := Token{
-		argumentPosition:   0,
-		ttype:              tokenType,
-		tokens:             tokens,
-		semanticCandidates: CfOneDashWord.SemanticCandidates,
-		boundTo:            nil,
-		value:              "-test",
-	}
-	tokens = append(tokens, &token)
-	isOption := token.IsOptionPart()
-	if !isOption {
-		t.Errorf("token should be option")
-	}
-}
+		})
+	})
+	Describe("IsOptionPart func", func() {
+		var tokens = TokenList{}
+		var tokenType TokenType = CfOneDashWord
+		token := NewToken(0, tokenType, "-test", tokens)
+		tokens = append(tokens, token)
+		isOption := token.IsOptionPart()
+		Describe("when token is context free and its semantic candidates are option parts", func() {
+			It("should return true", func() {
+				Expect(isOption).To(BeTrue())
+			})
+		})
+	})
+})

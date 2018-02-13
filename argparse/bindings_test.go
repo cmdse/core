@@ -2,18 +2,19 @@ package argparse
 
 import (
 	. "cmdse-cli/schema"
-	"testing"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 )
 
-func TestBindings_Contains(t *testing.T) {
-	bindings := Bindings{BindLeft, BindRight}
-	if !bindings.Contains(BindLeft) {
-		t.Errorf("Bindings should contain 'BindLeft'")
-	}
-	if !bindings.Contains(BindRight) {
-		t.Errorf("Bindings should contain 'BindRight'")
-	}
-	if bindings.Contains(BindNone) {
-		t.Errorf("Bindings should not contain 'BindNone'")
-	}
-}
+var _ = Describe("Bindings", func() {
+	Describe("Contains func", func() {
+		bindings := Bindings{BindLeft, BindRight}
+		It("should return true when provided binding was given at initialization", func() {
+			Expect(bindings.Contains(BindLeft)).To(BeTrue())
+			Expect(bindings.Contains(BindRight)).To(BeTrue())
+		})
+		It("should return false when provided binding was not given at initialization", func() {
+			Expect(bindings.Contains(BindNone)).To(BeFalse())
+		})
+	})
+})
