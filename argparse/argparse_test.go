@@ -1,8 +1,8 @@
 package argparse
 
 import (
-	. "cmdse-cli/schema"
 	"fmt"
+	. "github.com/cmdse/core/schema"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"cmdse-cli/argparse"
 	"fmt"
+	"github.com/cmdse/core/argparse"
 )
 
 func main() {

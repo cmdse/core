@@ -1,7 +1,7 @@
 package argparse
 
 import (
-	. "cmdse-cli/schema"
+	. "github.com/cmdse/core/schema"
 )
 
 func ParseArgument(arg string) *ContextFreeTokenType {

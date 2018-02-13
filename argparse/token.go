@@ -1,8 +1,8 @@
 package argparse
 
 import (
-	. "cmdse-cli/schema"
 	"fmt"
+	. "github.com/cmdse/core/schema"
 	"strings"
 )
 
