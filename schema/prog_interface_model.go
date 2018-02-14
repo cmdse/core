@@ -1,17 +1,5 @@
 package schema
 
-type OptDescriptionModel []*OptDescription
-
-func (models OptDescriptionModel) MatchArgument(arg string) []*SemanticTokenType {
-	for _, description := range models {
-		ttype := description.Match(arg)
-		if ttype != nil {
-			return ttype
-		}
-	}
-	return nil
-}
-
 type ProgramInterfaceModel struct {
 	optionScheme     OptionScheme
 	descriptionModel OptDescriptionModel
@@ -31,7 +19,7 @@ func (pim *ProgramInterfaceModel) Scheme() OptionScheme {
 	return pim.optionScheme
 }
 
-func (pim *ProgramInterfaceModel) Descriptions() OptDescriptionModel {
+func (pim *ProgramInterfaceModel) DescriptionModel() OptDescriptionModel {
 	if pim == nil {
 		return nil
 	}

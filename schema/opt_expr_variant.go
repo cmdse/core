@@ -33,7 +33,7 @@ func (optVariant *OptExpressionVariant) Build(flag string, param string) *regexp
 			panic("Cannot give a param argument when Assembly Type is 'Flag'")
 		}
 	}
-	regex, err := optVariant.assemblyRegBuilder.Build(flag, param)
+	regex, err := optVariant.assemblyRegBuilder.Build(regexp.QuoteMeta(flag), param)
 	if err != nil {
 		panic(err)
 	}

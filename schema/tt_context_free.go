@@ -32,8 +32,7 @@ func (tokenType *ContextFreeTokenType) Equal(comparedTType TokenType) bool {
 
 func (tokenType *ContextFreeTokenType) Regexp() (*regexp.Regexp, bool) {
 	reg := tokenType.regexp
-	isMatchAllRegex := true
-	isMatchAllRegex = reg == nil
+	isMatchAllRegex := reg == nil
 	return reg, isMatchAllRegex
 }
 

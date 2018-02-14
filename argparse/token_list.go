@@ -14,7 +14,7 @@ func (tokens TokenList) Parse(pim *ProgramInterfaceModel) TokenList {
 	if scheme := pim.Scheme(); scheme != nil {
 		tokens.ReduceCandidatesWithScheme(scheme)
 	}
-	if descriptions := pim.Descriptions(); descriptions != nil {
+	if descriptions := pim.DescriptionModel(); descriptions != nil {
 		tokens.MatchOptionDescription(descriptions)
 	}
 	for while := true; while; while = lastTwoLoopsResultInConversion() {
