@@ -1,7 +1,8 @@
 # CMDSE - Core
 
 [![Build Status](https://travis-ci.org/cmdse/core.svg?branch=master)](https://travis-ci.org/cmdse/core)
-[![codecov](https://codecov.io/gh/cmdse/core/branch/master/graph/badge.svg)](https://codecov.io/gh/cmdse/core)
+[![Maintainability](https://api.codeclimate.com/v1/badges/53a926acb5e66779ae11/maintainability)](https://codeclimate.com/github/cmdse/core/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/53a926acb5e66779ae11/test_coverage)](https://codeclimate.com/github/cmdse/core/test_coverage)
 
 Core library for cmdse.
 

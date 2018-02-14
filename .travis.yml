@@ -1,7 +1,9 @@
 language: go
 
+# The coverprofile for multiple packages works in go 1.10
+# see https://tip.golang.org/doc/go1.10#test
 go:
-  - 1.9
+  - master
 
 env:
   - DEP_VERSION="0.4.1"
@@ -15,8 +17,14 @@ before_install:
 install:
   - dep ensure
 
-script:
-  - ./test.sh
+# Install codeclimate tool and execute before-build
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
 
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
+script:
+  - go test -coverprofile c.out ./...
+
+after_script:
+  - ./cc-test-reporter after-build -t go test -coverprofile=c.out --exit-code $TRAVIS_TEST_RESULT
