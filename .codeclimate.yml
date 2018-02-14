@@ -1,3 +1,4 @@
+version: "2"
 plugins:
   gofmt:
     enabled: true
@@ -5,3 +6,40 @@ plugins:
     enabled: true
   golint:
     enabled: false
+checks:
+  argument-count:
+    enabled: true
+    config:
+      threshold: 4
+  complex-logic:
+    enabled: true
+    config:
+      threshold: 4
+  file-lines:
+    enabled: true
+    config:
+      threshold: 250
+  method-complexity:
+    enabled: true
+    config:
+      threshold: 7
+  method-count:
+    enabled: true
+    config:
+      threshold: 15
+  method-lines:
+    enabled: true
+    config:
+      threshold: 30
+  nested-control-flow:
+    enabled: true
+    config:
+      threshold: 4
+  return-statements:
+    enabled: true
+    config:
+      threshold: 3
+  similar-code:
+    enabled: true
+  identical-code:
+    enabled: true
