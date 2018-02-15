@@ -69,7 +69,7 @@ func (p *Parser) parseTokens(pim *ProgramInterfaceModel) TokenList {
 	tokens.CheckEndOfOptions()
 	tokens.ReduceCandidatesWithScheme(pim.Scheme())
 	tokens.MatchOptionDescription(pim.DescriptionModel())
-	for true {
+	for {
 		p.onePass()
 		if !p.lastTwoLoopsResultInConversion() {
 			break
