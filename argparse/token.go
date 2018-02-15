@@ -17,7 +17,7 @@ type Token struct {
 	semanticCandidates []*SemanticTokenType
 }
 
-func NewToken(argumentPosition int, ttype TokenType, value string, tokens TokenList) *Token {
+func newToken(argumentPosition int, ttype TokenType, value string, tokens TokenList) *Token {
 	semanticCandidates := []*SemanticTokenType{}
 	switch nutype := ttype.(type) {
 	case *ContextFreeTokenType:
@@ -104,12 +104,15 @@ func (token *Token) IsBoundToOneOf(bindings Bindings) bool {
 	}
 }
 
-func (token *Token) IsOptionPart() bool {
+// This function returns true if
+// - A (token ttype positional model is Unset) : all its semantic candidates return true for the provided predicate method
+// - B (token type positional model is not Unset) : the predicate method given token ttype returns true
+func tokenIsWithIndirection(token *Token, predicate func(TokenType) bool) bool {
 	ttype := token.ttype
 	if ttype.PosModel().Equal(PosModUnset) {
 		isOption := false
 		for _, semToken := range token.semanticCandidates {
-			if semToken.PosModel().IsOptionPart {
+			if predicate(semToken) {
 				isOption = true
 			} else {
 				isOption = false
@@ -118,25 +121,28 @@ func (token *Token) IsOptionPart() bool {
 		}
 		return isOption
 	} else {
-		return ttype.PosModel().IsOptionPart
+		return predicate(ttype)
 	}
 }
+
+// This function returns true if
+// - A (token ttype positional model is Unset) : all its semantic candidates are option parts
+// - B (token type positional model is not Unset) : token ttype is an option part
+func (token *Token) IsOptionPart() bool {
+	isOptionPart := func(ttype TokenType) bool {
+		return ttype.PosModel().IsOptionPart
+	}
+	return tokenIsWithIndirection(token, isOptionPart)
+}
+
+// This function returns true if
+// - A (token ttype positional model is Unset) : all its semantic candidates are option flags
+// - B (token type positional model is not Unset) : token ttype is an option flag
 func (token *Token) IsOptionFlag() bool {
-	ttype := token.ttype
-	if ttype.PosModel().Equal(PosModUnset) {
-		isOption := false
-		for _, semToken := range token.semanticCandidates {
-			if semToken.PosModel().IsOptionFlag {
-				isOption = true
-			} else {
-				isOption = false
-				break
-			}
-		}
-		return isOption
-	} else {
+	isOptionFlag := func(ttype TokenType) bool {
 		return ttype.PosModel().IsOptionFlag
 	}
+	return tokenIsWithIndirection(token, isOptionFlag)
 }
 
 func (token *Token) IsSemantic() bool {

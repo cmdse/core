@@ -6,41 +6,11 @@ import (
 
 type TokenList []*Token
 
-func (tokens TokenList) Parse(pim *ProgramInterfaceModel) TokenList {
-	previousConversions := 1
-	conversions := 1
-	tokens.CheckEndOfOptions()
-	lastTwoLoopsResultInConversion := func() bool { return previousConversions != 0 && conversions != 0 }
-	if scheme := pim.Scheme(); scheme != nil {
-		tokens.ReduceCandidatesWithScheme(scheme)
-	}
-	if descriptions := pim.DescriptionModel(); descriptions != nil {
-		tokens.MatchOptionDescription(descriptions)
-	}
-	for while := true; while; while = lastTwoLoopsResultInConversion() {
-		previousConversions = conversions
-		conversions = 0
-		for _, token := range tokens {
-			if !token.IsSemantic() {
-				token.InferRight()
-				if !token.IsSemantic() {
-					token.InferLeft()
-				}
-				if !token.IsSemantic() {
-					token.InferPositional()
-				}
-				if token.IsSemantic() {
-					conversions++
-				}
-			}
-		}
-	}
-	return tokens
-}
-
 func (tokens TokenList) ReduceCandidatesWithScheme(scheme OptionScheme) {
-	for _, token := range tokens {
-		token.ReduceCandidatesWithScheme(scheme)
+	if scheme != nil {
+		for _, token := range tokens {
+			token.ReduceCandidatesWithScheme(scheme)
+		}
 	}
 }
 
@@ -64,12 +34,15 @@ func (tokens TokenList) CheckEndOfOptions() {
 		}
 	}
 }
+
 func (tokens TokenList) MatchOptionDescription(descriptions OptDescriptionModel) {
-	for _, token := range tokens {
-		if !token.IsSemantic() && token.IsOptionFlag() {
-			types := descriptions.MatchArgument(token.value)
-			if types != nil {
-				token.setCandidates(types)
+	if descriptions != nil {
+		for _, token := range tokens {
+			if !token.IsSemantic() && token.IsOptionFlag() {
+				types := descriptions.MatchArgument(token.value)
+				if types != nil {
+					token.setCandidates(types)
+				}
 			}
 		}
 	}

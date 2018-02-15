@@ -7,10 +7,10 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("ParseArgument function", func() {
+var _ = Describe("parseArgument function", func() {
 	DescribeTable("output",
 		func(arg string, ttype *ContextFreeTokenType) {
-			Expect(ParseArgument(arg).Name()).To(Equal(ttype.Name()))
+			Expect(parseArgument(arg).Name()).To(Equal(ttype.Name()))
 		},
 		Entry("should match typical gnu explicit assignment",
 			"--option=value", CfGnuExplicitAssignment),
