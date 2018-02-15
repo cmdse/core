@@ -1,0 +1,5 @@
+{
+  "Enable": ["vet", "structcheck", "maligned", "nakedret", "deadcode", "gocyclo", "ineffassign", "dupl", "gotype", "errcheck", "varcheck", "goconst", "gosimple", "staticcheck", "unparam", "unused", "misspell"],
+  "Format": "{{.Path.Relative}}:{{.Line}}:{{if .Col}}{{.Col}}{{end}}:{{.Severity}}: {{.Message}} ({{.Linter}})",
+  "Cyclo": 7
+}
