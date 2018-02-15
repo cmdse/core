@@ -18,11 +18,10 @@ type Token struct {
 }
 
 func newToken(argumentPosition int, ttype TokenType, value string, tokens TokenList) *Token {
-	semanticCandidates := []*SemanticTokenType{}
-	switch nutype := ttype.(type) {
-	case *ContextFreeTokenType:
-		semanticCandidates = make([]*SemanticTokenType, len(nutype.SemanticCandidates))
-		copy(semanticCandidates, nutype.SemanticCandidates)
+	var semanticCandidates []*SemanticTokenType
+	if cfType, ok := ttype.(*ContextFreeTokenType); ok {
+		semanticCandidates = make([]*SemanticTokenType, len(cfType.SemanticCandidates))
+		copy(semanticCandidates, cfType.SemanticCandidates)
 	}
 	return &Token{
 		argumentPosition,
@@ -151,9 +150,8 @@ func (token *Token) IsContextFree() bool {
 
 func inferFromBoundRightLeftNeighbour(token *Token, leftNeighbour *Token) {
 	if leftNeighbour.IsBoundTo(BindRight) {
-		switch ttype := leftNeighbour.ttype.(type) {
-		case *SemanticTokenType:
-			token.setCandidate(ttype.Variant().OptValueTokenType())
+		if semType, ok := leftNeighbour.ttype.(*SemanticTokenType); ok {
+			token.setCandidate(semType.Variant().OptValueTokenType())
 		}
 	}
 }
@@ -175,8 +173,7 @@ func inferFromBoundLeftOrNoneLeftNeighbour(token *Token, leftNeighbour *Token) {
 
 func (token *Token) InferLeft() {
 	position := token.argumentPosition
-	switch token.ttype.(type) {
-	case *ContextFreeTokenType:
+	if _, ok := token.ttype.(*ContextFreeTokenType); ok {
 		hasLeftNeighbour := position > 0
 		if hasLeftNeighbour {
 			leftNeighbour := token.tokens[position-1]
@@ -198,8 +195,7 @@ func inferFromBoundRightOrNoneRightNeighbour(token *Token, rightNeighbour *Token
 
 func (token *Token) InferRight() {
 	position := token.argumentPosition
-	switch token.ttype.(type) {
-	case *ContextFreeTokenType:
+	if _, ok := token.ttype.(*ContextFreeTokenType); ok {
 		hasRightNeighbour := position < len(token.tokens)+1
 		if token.IsOptionPart() && hasRightNeighbour {
 			rightNeighbour := token.tokens[position+1]

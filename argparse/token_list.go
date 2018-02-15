@@ -22,15 +22,16 @@ func (tokens TokenList) MapToTypes() []TokenType {
 	return types
 }
 
+func convertTokensToOperandsFrom(position int, tokens TokenList) {
+	for rightIndex := position + 1; rightIndex < len(tokens); rightIndex++ {
+		(tokens)[rightIndex].setCandidate(SemOperand)
+	}
+}
+
 func (tokens TokenList) CheckEndOfOptions() {
-	for index, token := range tokens {
-		switch ttype := token.ttype.(type) {
-		case *SemanticTokenType:
-			if ttype.Equal(SemEndOfOptions) {
-				for rightIndex := index + 1; rightIndex < len(tokens); rightIndex++ {
-					(tokens)[rightIndex].setCandidate(SemOperand)
-				}
-			}
+	for position, token := range tokens {
+		if token.ttype.Equal(SemEndOfOptions) {
+			convertTokensToOperandsFrom(position, tokens)
 		}
 	}
 }
