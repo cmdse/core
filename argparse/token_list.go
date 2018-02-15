@@ -35,15 +35,31 @@ func (tokens TokenList) CheckEndOfOptions() {
 	}
 }
 
+func contextFreeAndOptionFlag(token *Token) bool {
+	return token.IsOptionFlag() && token.IsContextFree()
+}
+
 func (tokens TokenList) MatchOptionDescription(descriptions OptDescriptionModel) {
 	if descriptions != nil {
-		for _, token := range tokens {
-			if !token.IsSemantic() && token.IsOptionFlag() {
-				types := descriptions.MatchArgument(token.value)
-				if types != nil {
-					token.setCandidates(types)
-				}
+		for _, token := range tokens.When(contextFreeAndOptionFlag) {
+			types := descriptions.MatchArgument(token.value)
+			if types != nil {
+				token.setCandidates(types)
 			}
 		}
 	}
+}
+
+func (tokens TokenList) When(predicate func(token *Token) bool) TokenList {
+	predicatedTokens := make(TokenList, 0, len(tokens))
+	for _, token := range tokens {
+		if predicate(token) {
+			predicatedTokens = append(predicatedTokens, token)
+		}
+	}
+	return predicatedTokens
+}
+
+func (tokens TokenList) whenContextFree() TokenList {
+	return tokens.When((*Token).IsContextFree)
 }

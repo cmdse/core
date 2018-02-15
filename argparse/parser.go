@@ -54,31 +54,26 @@ func (p *Parser) lastTwoLoopsResultInConversion() bool {
 func (p *Parser) onePass() {
 	p.previousConversions = p.conversions
 	p.conversions = 0
-	for _, token := range p.tokens {
-		if !token.IsSemantic() {
-			token.InferRight()
-			if !token.IsSemantic() {
-				token.InferLeft()
-			}
-			if !token.IsSemantic() {
-				token.InferPositional()
-			}
-			if token.IsSemantic() {
-				p.conversions++
-			}
+	for _, token := range p.tokens.whenContextFree() {
+		token.InferRight()
+		token.InferLeft()
+		token.InferPositional()
+		if token.IsSemantic() {
+			p.conversions++
 		}
 	}
 }
 
 func (p *Parser) parseTokens(pim *ProgramInterfaceModel) TokenList {
 	tokens := p.tokens
-
 	tokens.CheckEndOfOptions()
 	tokens.ReduceCandidatesWithScheme(pim.Scheme())
 	tokens.MatchOptionDescription(pim.DescriptionModel())
-
-	for while := true; while; while = p.lastTwoLoopsResultInConversion() {
+	for true {
 		p.onePass()
+		if !p.lastTwoLoopsResultInConversion() {
+			break
+		}
 	}
 	return tokens
 }
