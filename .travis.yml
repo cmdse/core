@@ -6,25 +6,23 @@ go:
   - master
 
 env:
-  - DEP_VERSION="0.4.1"
+  - DEP_VERSION="0.4.1" CC_TEST_REPORTER="0.4.2"
 
 before_install:
-  # Download the binary to bin folder in $GOPATH
   - curl -L -s https://github.com/golang/dep/releases/download/v${DEP_VERSION}/dep-linux-amd64 -o $GOPATH/bin/dep
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-${CC_TEST_REPORTER}-linux-amd64 > ./cc-test-reporter
   # Make the binary executable
   - chmod +x $GOPATH/bin/dep
+  - chmod +x ./cc-test-reporter
 
 install:
   - dep ensure
 
-# Install codeclimate tool and execute before-build
 before_script:
-  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-  - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
 
 script:
   - go test -coverprofile c.out ./...
 
 after_script:
-  - ./cc-test-reporter after-build -t go test -coverprofile=c.out --exit-code $TRAVIS_TEST_RESULT
+  - ./cc-test-reporter after-build -t gocov --exit-code $TRAVIS_TEST_RESULT
