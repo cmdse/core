@@ -29,6 +29,7 @@ script:
 
 after_success:
   # Post goreportcard refresh
-  - curl -X POST https://goreportcard.com/checks -H 'content-type: multipart/form-data' -F repo=github.com/cmdse/core
+  - >
+    curl -X POST https://goreportcard.com/checks -H 'content-type: multipart/form-data' -F repo=github.com/cmdse/core
   # Launch code climate test coverage reporter
   - ./cc-test-reporter after-build -t gocov --exit-code $TRAVIS_TEST_RESULT
