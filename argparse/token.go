@@ -80,9 +80,8 @@ func (token *Token) IsBoundTo(binding Binding) bool {
 			}
 		}
 		return isBound
-	} else {
-		return ttype.PosModel().Binding == binding
 	}
+	return ttype.PosModel().Binding == binding
 }
 
 func (token *Token) IsBoundToOneOf(bindings Bindings) bool {
@@ -96,9 +95,8 @@ func (token *Token) IsBoundToOneOf(bindings Bindings) bool {
 			}
 		}
 		return isBound
-	} else {
-		return bindings.Contains(ttype.PosModel().Binding)
 	}
+	return bindings.Contains(ttype.PosModel().Binding)
 }
 
 // This function returns true if
@@ -115,9 +113,8 @@ func tokenIsWithIndirection(token *Token, predicate func(TokenType) bool) bool {
 			}
 		}
 		return isOption
-	} else {
-		return predicate(ttype)
 	}
+	return predicate(ttype)
 }
 
 // This function returns true if
