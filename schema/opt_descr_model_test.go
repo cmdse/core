@@ -36,4 +36,11 @@ var _ = Describe("OptDescriptionModel", func() {
 			Expect(model.MatchArgument("-no-match")).To(HaveLen(0))
 		})
 	})
+	Describe("Variants method", func() {
+		It("it should return a slice of unique variants", func() {
+			Expect(model.Variants()).To(ConsistOf(VariantPOSIXShortSwitch, VariantPOSIXShortAssignment))
+			Expect(model.Variants()).To(HaveLen(2))
+
+		})
+	})
 })
