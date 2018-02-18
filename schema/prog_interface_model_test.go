@@ -7,6 +7,7 @@ import (
 
 var _ = Describe("ProgramInterfaceModel", func() {
 	Describe("Scheme method", func() {
+		// nolint: dupl
 		When("pim is null", func() {
 			It("should not panic", func() {
 				var pim *ProgramInterfaceModel
@@ -25,6 +26,7 @@ var _ = Describe("ProgramInterfaceModel", func() {
 		})
 	})
 	Describe("DescriptionModel method", func() {
+		// nolint: dupl
 		When("pim is null", func() {
 			It("should not panic", func() {
 				var pim *ProgramInterfaceModel
