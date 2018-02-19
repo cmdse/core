@@ -10,6 +10,8 @@ type MatchModel struct {
 	regex *regexp.Regexp
 }
 
+type MatchModels []*MatchModel
+
 func (matchModel *MatchModel) build() {
 	matchModel.regex = matchModel.variant.Build(matchModel.flag, matchModel.param)
 }

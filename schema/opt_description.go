@@ -2,7 +2,7 @@ package schema
 
 type OptDescription struct {
 	Description string
-	MatchModels []*MatchModel
+	MatchModels MatchModels
 }
 
 // This function returns the semantic tokens type associated with the provided argument

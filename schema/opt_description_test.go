@@ -10,7 +10,7 @@ var _ = Describe("OptDescription", func() {
 		When("provided with match models composed of switches", func() {
 			description := &OptDescription{
 				"execute",
-				[]*MatchModel{
+				MatchModels{
 					NewSimpleMatchModel(VariantPOSIXShortSwitch, "x"),
 					NewSimpleMatchModel(VariantGNUSwitch, "execute"),
 					NewSimpleMatchModel(VariantX2lktSwitch, "execute"),
@@ -32,7 +32,7 @@ var _ = Describe("OptDescription", func() {
 		When("provided with match models composed of switches and options assignments", func() {
 			description := &OptDescription{
 				"execute",
-				[]*MatchModel{
+				MatchModels{
 					NewSimpleMatchModel(VariantPOSIXShortAssignment, "x"),
 					NewSimpleMatchModel(VariantPOSIXShortSwitch, "x"),
 				},

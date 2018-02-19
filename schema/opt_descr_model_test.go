@@ -9,19 +9,19 @@ var _ = Describe("OptDescriptionModel", func() {
 	model := OptDescriptionModel{
 		&OptDescription{
 			"execute",
-			[]*MatchModel{
+			MatchModels{
 				NewSimpleMatchModel(VariantPOSIXShortSwitch, "x"),
 			},
 		},
 		&OptDescription{
 			"parse",
-			[]*MatchModel{
+			MatchModels{
 				NewSimpleMatchModel(VariantPOSIXShortAssignment, "p"),
 			},
 		},
 		&OptDescription{
 			"query",
-			[]*MatchModel{
+			MatchModels{
 				NewSimpleMatchModel(VariantPOSIXShortSwitch, "q"),
 			},
 		},
