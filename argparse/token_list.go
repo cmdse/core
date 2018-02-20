@@ -22,8 +22,17 @@ func (tokens TokenList) MapToTypes() []TokenType {
 	return types
 }
 
-func convertTokensToOperandsFrom(position int, tokens TokenList) {
-	for rightIndex := position + 1; rightIndex < len(tokens); rightIndex++ {
+func isOperandOrOptAssignmentValue(stt *SemanticTokenType) bool {
+	binding := stt.PosModel().Binding
+	return (binding == BindLeft || binding == BindNone) && !stt.PosModel().IsOptionFlag
+}
+
+func inferFromEndOfOptions(position int, tokens TokenList) {
+	// The first token right after end-of-option could be an option assignment value,
+	// so we don't treat it as an operand
+	tokens[position+1].reduceCandidates(isOperandOrOptAssignmentValue)
+	// The tokens after end-of-option must be operands
+	for rightIndex := position + 2; rightIndex < len(tokens); rightIndex++ {
 		(tokens)[rightIndex].setCandidate(SemOperand)
 	}
 }
@@ -31,7 +40,7 @@ func convertTokensToOperandsFrom(position int, tokens TokenList) {
 func (tokens TokenList) CheckEndOfOptions() {
 	for position, token := range tokens {
 		if token.ttype.Equal(SemEndOfOptions) {
-			convertTokensToOperandsFrom(position, tokens)
+			inferFromEndOfOptions(position, tokens)
 		}
 	}
 }

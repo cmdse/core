@@ -2,11 +2,12 @@ package argparse
 
 import (
 	"fmt"
-	. "github.com/cmdse/core/schema"
 	"strings"
+
+	. "github.com/cmdse/core/schema"
 )
 
-type predicate func(*SemanticTokenType) bool
+type candidatePredicate func(*SemanticTokenType) bool
 
 type Token struct {
 	argumentPosition   int
@@ -47,8 +48,8 @@ func (token *Token) possiblyConvertToSemantic() {
 	}
 }
 
-// Remove candidates which don't satisfy to the given predicate
-func (token *Token) reduceCandidates(pred predicate) {
+// Remove candidates which don't satisfy to the given candidatePredicate
+func (token *Token) reduceCandidates(pred candidatePredicate) {
 	newCandidates := make([]*SemanticTokenType, 0, len(token.semanticCandidates))
 	for _, candidate := range token.semanticCandidates {
 		if pred(candidate) {
@@ -100,8 +101,8 @@ func (token *Token) IsBoundToOneOf(bindings Bindings) bool {
 }
 
 // This function returns true if
-// - A (token ttype positional model is Unset) : all its semantic candidates return true for the provided predicate method
-// - B (token type positional model is not Unset) : the predicate method given token ttype returns true
+// - A (token ttype positional model is Unset) : all its semantic candidates return true for the provided candidatePredicate method
+// - B (token type positional model is not Unset) : the candidatePredicate method given token ttype returns true
 func tokenIsWithIndirection(token *Token, predicate func(TokenType) bool) bool {
 	ttype := token.ttype
 	if ttype.PosModel().Equal(PosModUnset) {
@@ -168,12 +169,27 @@ func inferFromBoundLeftOrNoneLeftNeighbour(token *Token, leftNeighbour *Token) {
 	}
 }
 
-func (token *Token) InferLeft() {
+// This function will return the first non-end-of-options left neighbour if any
+func (token *Token) findLeftNeighbour() (neighbour *Token, found bool) {
 	position := token.argumentPosition
+	leftNeighbourPos := position - 1
+	hasLeftNeighbour := leftNeighbourPos >= 0
+	if hasLeftNeighbour {
+		leftNeighbour := token.tokens[leftNeighbourPos]
+		if leftNeighbour.ttype == SemEndOfOptions {
+			return leftNeighbour.findLeftNeighbour()
+		} else {
+			return leftNeighbour, true
+		}
+	} else {
+		return nil, false
+	}
+}
+
+func (token *Token) InferLeft() {
 	if _, ok := token.ttype.(*ContextFreeTokenType); ok {
-		hasLeftNeighbour := position > 0
+		leftNeighbour, hasLeftNeighbour := token.findLeftNeighbour()
 		if hasLeftNeighbour {
-			leftNeighbour := token.tokens[position-1]
 			inferFromBoundLeftOrNoneLeftNeighbour(token, leftNeighbour)
 			inferFromBoundRightLeftNeighbour(token, leftNeighbour)
 		}
@@ -190,12 +206,27 @@ func inferFromBoundRightOrNoneRightNeighbour(token *Token, rightNeighbour *Token
 	}
 }
 
-func (token *Token) InferRight() {
+// This function will return the first non-end-of-options right neighbour if any
+func (token *Token) findRightNeighbour() (neighbour *Token, found bool) {
 	position := token.argumentPosition
+	rightNeighbourPos := position + 1
+	hasRightNeighbour := rightNeighbourPos < len(token.tokens)
+	if hasRightNeighbour {
+		rightNeighbour := token.tokens[rightNeighbourPos]
+		if rightNeighbour.ttype == SemEndOfOptions {
+			return rightNeighbour.findRightNeighbour()
+		} else {
+			return rightNeighbour, true
+		}
+	} else {
+		return nil, false
+	}
+}
+
+func (token *Token) InferRight() {
 	if _, ok := token.ttype.(*ContextFreeTokenType); ok {
-		hasRightNeighbour := position < len(token.tokens)+1
+		rightNeighbour, hasRightNeighbour := token.findRightNeighbour()
 		if token.IsOptionPart() && hasRightNeighbour {
-			rightNeighbour := token.tokens[position+1]
 			inferFromBoundRightOrNoneRightNeighbour(token, rightNeighbour)
 		}
 	}

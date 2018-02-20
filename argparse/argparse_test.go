@@ -46,7 +46,7 @@ var _ = Describe("ParseArguments method", func() {
 			),
 			Entry("should handle end-of-options special switch",
 				[]string{"-option", "-long-option", "--", "-arg", "--arg2", "argument"},
-				[]TokenType{CfOneDashWordAlphaNum, SemX2lktSwitch, SemEndOfOptions, SemOperand, SemOperand, SemOperand},
+				[]TokenType{CfOneDashWordAlphaNum, CfOneDashWord, SemEndOfOptions, CfOneDashWordAlphaNum, SemOperand, SemOperand},
 			),
 		)
 	})
@@ -60,7 +60,7 @@ var _ = Describe("ParseArguments method", func() {
 			},
 			Entry("should handle properly when provided with XToolkitStrict option scheme",
 				[]string{"-option", "-long-option", "--", "-arg", "--arg2", "argument"},
-				[]TokenType{SemX2lktSwitch, SemX2lktSwitch, SemEndOfOptions, SemOperand, SemOperand, SemOperand},
+				[]TokenType{SemX2lktSwitch, CfOneDashWord, SemEndOfOptions, CfOneDashWordAlphaNum, SemOperand, SemOperand},
 				OptSchemeXToolkitStrict,
 			),
 			Entry("should handle properly when provided with POSIXStrict option scheme",
@@ -81,6 +81,15 @@ var _ = Describe("ParseArguments method", func() {
 			Entry("should handle properly when provided with a description model matching short switches and assignments",
 				[]string{"-x", "-p", "optionValue", "-q", "arg1", "arg2"},
 				[]TokenType{SemPOSIXShortSwitch, SemPOSIXShortAssignmentLeftSide, SemPOSIXShortAssignmentValue, SemPOSIXShortSwitch, SemOperand, SemOperand},
+				OptDescriptionModel{
+					NewOptDescription("execute", NewStandaloneMatchModel(VariantPOSIXShortSwitch, "x")),
+					NewOptDescription("parse", NewStandaloneMatchModel(VariantPOSIXShortAssignment, "p")),
+					NewOptDescription("query", NewStandaloneMatchModel(VariantPOSIXShortSwitch, "q")),
+				},
+			),
+			Entry("should bind a left side assignment to the closest token after an end-of-option token",
+				[]string{"-x", "-p", "optionValue", "-p", "--", "pArgument", "operand"},
+				[]TokenType{SemPOSIXShortSwitch, SemPOSIXShortAssignmentLeftSide, SemPOSIXShortAssignmentValue, SemPOSIXShortAssignmentLeftSide, SemEndOfOptions, SemPOSIXShortAssignmentValue, SemOperand},
 				OptDescriptionModel{
 					NewOptDescription("execute", NewStandaloneMatchModel(VariantPOSIXShortSwitch, "x")),
 					NewOptDescription("parse", NewStandaloneMatchModel(VariantPOSIXShortAssignment, "p")),
