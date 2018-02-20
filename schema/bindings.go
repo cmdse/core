@@ -1,8 +1,4 @@
-package tkn
-
-import (
-	. "github.com/cmdse/core/schema"
-)
+package schema
 
 type Bindings []Binding
 

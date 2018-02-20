@@ -1,12 +1,12 @@
 package tkn
 
 import (
-	. "github.com/cmdse/core/schema"
+	"github.com/cmdse/core/schema"
 )
 
 type TokenList []*Token
 
-func (tokens TokenList) ReduceCandidatesWithScheme(scheme OptionScheme) {
+func (tokens TokenList) ReduceCandidatesWithScheme(scheme schema.OptionScheme) {
 	if scheme != nil {
 		for _, token := range tokens {
 			token.ReduceCandidatesWithScheme(scheme)
@@ -14,17 +14,17 @@ func (tokens TokenList) ReduceCandidatesWithScheme(scheme OptionScheme) {
 	}
 }
 
-func (tokens TokenList) MapToTypes() []TokenType {
-	types := make([]TokenType, len(tokens))
+func (tokens TokenList) MapToTypes() []schema.TokenType {
+	types := make([]schema.TokenType, len(tokens))
 	for i := range tokens {
 		types[i] = tokens[i].Ttype
 	}
 	return types
 }
 
-func isOperandOrOptAssignmentValue(stt *SemanticTokenType) bool {
+func isOperandOrOptAssignmentValue(stt *schema.SemanticTokenType) bool {
 	binding := stt.PosModel().Binding
-	return (binding == BindLeft || binding == BindNone) && !stt.PosModel().IsOptionFlag
+	return (binding == schema.BindLeft || binding == schema.BindNone) && !stt.PosModel().IsOptionFlag
 }
 
 func inferFromEndOfOptions(position int, tokens TokenList) {
@@ -33,13 +33,13 @@ func inferFromEndOfOptions(position int, tokens TokenList) {
 	tokens[position+1].reduceCandidates(isOperandOrOptAssignmentValue)
 	// The Tokens after end-of-option must be operands
 	for rightIndex := position + 2; rightIndex < len(tokens); rightIndex++ {
-		(tokens)[rightIndex].setCandidate(SemOperand)
+		(tokens)[rightIndex].setCandidate(schema.SemOperand)
 	}
 }
 
 func (tokens TokenList) CheckEndOfOptions() {
 	for position, token := range tokens {
-		if token.Ttype.Equal(SemEndOfOptions) {
+		if token.Ttype.Equal(schema.SemEndOfOptions) {
 			inferFromEndOfOptions(position, tokens)
 		}
 	}
@@ -49,7 +49,7 @@ func contextFreeAndOptionFlag(token *Token) bool {
 	return token.IsOptionFlag() && token.IsContextFree()
 }
 
-func (tokens TokenList) MatchOptionDescription(descriptions OptDescriptionModel) {
+func (tokens TokenList) MatchOptionDescription(descriptions schema.OptDescriptionModel) {
 	if descriptions != nil {
 		for _, token := range tokens.When(contextFreeAndOptionFlag) {
 			types := descriptions.MatchArgument(token.Value)

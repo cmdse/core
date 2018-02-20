@@ -2,12 +2,12 @@ package parser
 
 import (
 	"github.com/cmdse/core/argparse/tkn"
-	. "github.com/cmdse/core/schema"
+	"github.com/cmdse/core/schema"
 )
 
 type Parser struct {
 	*Behavior
-	pim                 *ProgramInterfaceModel
+	pim                 *schema.ProgramInterfaceModel
 	tokens              tkn.TokenList
 	previousConversions int
 	conversions         int
