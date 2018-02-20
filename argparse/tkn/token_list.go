@@ -1,4 +1,4 @@
-package argparse
+package tkn
 
 import (
 	. "github.com/cmdse/core/schema"
@@ -17,7 +17,7 @@ func (tokens TokenList) ReduceCandidatesWithScheme(scheme OptionScheme) {
 func (tokens TokenList) MapToTypes() []TokenType {
 	types := make([]TokenType, len(tokens))
 	for i := range tokens {
-		types[i] = tokens[i].ttype
+		types[i] = tokens[i].Ttype
 	}
 	return types
 }
@@ -28,10 +28,10 @@ func isOperandOrOptAssignmentValue(stt *SemanticTokenType) bool {
 }
 
 func inferFromEndOfOptions(position int, tokens TokenList) {
-	// The first token right after end-of-option could be an option assignment value,
+	// The first token right after end-of-option could be an option assignment Value,
 	// so we don't treat it as an operand
 	tokens[position+1].reduceCandidates(isOperandOrOptAssignmentValue)
-	// The tokens after end-of-option must be operands
+	// The Tokens after end-of-option must be operands
 	for rightIndex := position + 2; rightIndex < len(tokens); rightIndex++ {
 		(tokens)[rightIndex].setCandidate(SemOperand)
 	}
@@ -39,7 +39,7 @@ func inferFromEndOfOptions(position int, tokens TokenList) {
 
 func (tokens TokenList) CheckEndOfOptions() {
 	for position, token := range tokens {
-		if token.ttype.Equal(SemEndOfOptions) {
+		if token.Ttype.Equal(SemEndOfOptions) {
 			inferFromEndOfOptions(position, tokens)
 		}
 	}
@@ -52,7 +52,7 @@ func contextFreeAndOptionFlag(token *Token) bool {
 func (tokens TokenList) MatchOptionDescription(descriptions OptDescriptionModel) {
 	if descriptions != nil {
 		for _, token := range tokens.When(contextFreeAndOptionFlag) {
-			types := descriptions.MatchArgument(token.value)
+			types := descriptions.MatchArgument(token.Value)
 			if types != nil {
 				token.setCandidates(types)
 			}
@@ -70,6 +70,6 @@ func (tokens TokenList) When(predicate func(token *Token) bool) TokenList {
 	return predicatedTokens
 }
 
-func (tokens TokenList) whenContextFree() TokenList {
+func (tokens TokenList) WhenContextFree() TokenList {
 	return tokens.When((*Token).IsContextFree)
 }

@@ -1,4 +1,4 @@
-package argparse
+package tkn
 
 import (
 	. "github.com/cmdse/core/schema"

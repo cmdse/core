@@ -1,4 +1,4 @@
-package argparse
+package tkn
 
 import (
 	. "github.com/cmdse/core/schema"
@@ -10,7 +10,7 @@ var _ = Describe("Token", func() {
 	Describe("IsBoundToOneOf method", func() {
 		var tokens TokenList
 		var tokenType TokenType = CfOneDashWord
-		token := newToken(0, tokenType, "-option", tokens)
+		token := NewToken(0, tokenType, "-option", tokens)
 		When("token type is context-free", func() {
 			Context("and its semantic candidates are bound 'None' and 'Right'", func() {
 				Context("and provided bindings are 'None' and 'Right'", func() {
@@ -36,7 +36,7 @@ var _ = Describe("Token", func() {
 		When("token type is semantic and bound 'None'", func() {
 			var tokens TokenList
 			var tokenType TokenType = SemX2lktSwitch
-			token := newToken(0, tokenType, "-option", tokens)
+			token := NewToken(0, tokenType, "-option", tokens)
 			Context("and provided bindings are 'None' and 'Left'", func() {
 				boundToNoneOrLeft := token.IsBoundToOneOf(Bindings{BindNone, BindLeft})
 				It("should return true", func() {
@@ -55,7 +55,7 @@ var _ = Describe("Token", func() {
 	Describe("IsBoundTo method", func() {
 		var tokens = TokenList{}
 		var tokenType TokenType = CfEndOfOptions
-		token := newToken(0, tokenType, "--", tokens)
+		token := NewToken(0, tokenType, "--", tokens)
 		When("token type is semantic and bound to 'none'", func() {
 			Context("and provided binding is 'None'", func() {
 				It("should return true", func() {
@@ -71,7 +71,7 @@ var _ = Describe("Token", func() {
 			})
 		})
 		When("token type is context-free and its semantic candidates are bound to 'None'", func() {
-			token := newToken(0, CfEndOfOptions, "-test", nil)
+			token := NewToken(0, CfEndOfOptions, "-test", nil)
 			When("provided with 'None' binding", func() {
 				It("should return true", func() {
 					boundToNone := token.IsBoundTo(BindNone)
@@ -89,7 +89,7 @@ var _ = Describe("Token", func() {
 	})
 	Describe("IsOptionPart method", func() {
 		checkIsOptionPart := func(tokenType TokenType, arg string) {
-			token := newToken(0, tokenType, arg, nil)
+			token := NewToken(0, tokenType, arg, nil)
 			isOption := token.IsOptionPart()
 			It("should return true", func() {
 				Expect(isOption).To(BeTrue())
@@ -99,19 +99,19 @@ var _ = Describe("Token", func() {
 			checkIsOptionPart(CfOneDashWord, "-test")
 		})
 		When("token is semantic and option part", func() {
-			checkIsOptionPart(SemX2lktExplicitAssignment, "-opt=value")
+			checkIsOptionPart(SemX2lktExplicitAssignment, "-opt=Value")
 		})
 	})
 	Describe("IsOptionFlag method", func() {
 		When("token is context free and its semantic candidates are option flags", func() {
-			token := newToken(0, CfEndOfOptions, "--", nil)
+			token := NewToken(0, CfEndOfOptions, "--", nil)
 			isOption := token.IsOptionFlag()
 			It("should return true", func() {
 				Expect(isOption).To(BeTrue())
 			})
 		})
 		When("token is semantics and is option flag", func() {
-			token := newToken(0, SemX2lktExplicitAssignment, "-opt=value", nil)
+			token := NewToken(0, SemX2lktExplicitAssignment, "-opt=Value", nil)
 			isOptionPart := token.IsOptionFlag()
 			It("should return true", func() {
 				Expect(isOptionPart).To(BeTrue())
@@ -119,15 +119,15 @@ var _ = Describe("Token", func() {
 		})
 	})
 	Describe("String method", func() {
-		token := newToken(0, CfTwoDashWord, "--two-dash", nil)
+		token := NewToken(0, CfTwoDashWord, "--two-dash", nil)
 		It("should return a string", func() {
 			Expect(token.String()).To(BeAssignableToTypeOf(""))
 		})
 	})
 	Describe("MapToTypes method", func() {
 		var tokens = TokenList{}
-		tokens = append(tokens, newToken(0, CfEndOfOptions, "--", tokens))
-		tokens = append(tokens, newToken(0, SemX2lktExplicitAssignment, "-opt=value", tokens))
+		tokens = append(tokens, NewToken(0, CfEndOfOptions, "--", tokens))
+		tokens = append(tokens, NewToken(0, SemX2lktExplicitAssignment, "-opt=Value", tokens))
 		It("should return a list of token types", func() {
 			Expect(tokens.MapToTypes()).To(BeAssignableToTypeOf([]TokenType{}))
 			Expect(tokens.MapToTypes()).To(ConsistOf(CfEndOfOptions, SemX2lktExplicitAssignment))

@@ -1,4 +1,4 @@
-package argparse
+package tkn
 
 import (
 	"fmt"
@@ -10,15 +10,15 @@ import (
 type candidatePredicate func(*SemanticTokenType) bool
 
 type Token struct {
-	argumentPosition   int
-	ttype              TokenType
-	value              string
-	boundTo            *Token
-	tokens             TokenList
-	semanticCandidates []*SemanticTokenType
+	ArgumentPosition   int
+	Ttype              TokenType
+	Value              string
+	BoundTo            *Token
+	Tokens             TokenList
+	SemanticCandidates []*SemanticTokenType
 }
 
-func newToken(argumentPosition int, ttype TokenType, value string, tokens TokenList) *Token {
+func NewToken(argumentPosition int, ttype TokenType, value string, tokens TokenList) *Token {
 	var semanticCandidates []*SemanticTokenType
 	if cfType, ok := ttype.(*ContextFreeTokenType); ok {
 		semanticCandidates = make([]*SemanticTokenType, len(cfType.SemanticCandidates))
@@ -35,46 +35,46 @@ func newToken(argumentPosition int, ttype TokenType, value string, tokens TokenL
 
 }
 
-func (token *Token) possiblyConvertToSemantic() {
-	if len(token.semanticCandidates) == 1 {
-		var semanticType = token.semanticCandidates[0]
-		token.ttype = semanticType
+func (token *Token) AttemptConvertToSemantic() {
+	if len(token.SemanticCandidates) == 1 {
+		var semanticType = token.SemanticCandidates[0]
+		token.Ttype = semanticType
 		if semanticType.PosModel().Binding == BindRight {
-			token.boundTo = token.tokens[token.argumentPosition+1]
+			token.BoundTo = token.Tokens[token.ArgumentPosition+1]
 		}
 		if semanticType.PosModel().Binding == BindLeft {
-			token.boundTo = token.tokens[token.argumentPosition-1]
+			token.BoundTo = token.Tokens[token.ArgumentPosition-1]
 		}
 	}
 }
 
 // Remove candidates which don't satisfy to the given candidatePredicate
 func (token *Token) reduceCandidates(pred candidatePredicate) {
-	newCandidates := make([]*SemanticTokenType, 0, len(token.semanticCandidates))
-	for _, candidate := range token.semanticCandidates {
+	newCandidates := make([]*SemanticTokenType, 0, len(token.SemanticCandidates))
+	for _, candidate := range token.SemanticCandidates {
 		if pred(candidate) {
 			newCandidates = append(newCandidates, candidate)
 		}
 	}
-	token.semanticCandidates = newCandidates
-	token.possiblyConvertToSemantic()
+	token.SemanticCandidates = newCandidates
+	token.AttemptConvertToSemantic()
 }
 
 func (token *Token) setCandidate(tokenType *SemanticTokenType) {
-	token.semanticCandidates = []*SemanticTokenType{tokenType}
-	token.possiblyConvertToSemantic()
+	token.SemanticCandidates = []*SemanticTokenType{tokenType}
+	token.AttemptConvertToSemantic()
 }
 
 func (token *Token) setCandidates(tokenTypes []*SemanticTokenType) {
-	token.semanticCandidates = tokenTypes
-	token.possiblyConvertToSemantic()
+	token.SemanticCandidates = tokenTypes
+	token.AttemptConvertToSemantic()
 }
 
 func (token *Token) IsBoundTo(binding Binding) bool {
-	ttype := token.ttype
+	ttype := token.Ttype
 	if ttype.PosModel().Equal(PosModUnset) {
 		isBound := true
-		for _, semToken := range token.semanticCandidates {
+		for _, semToken := range token.SemanticCandidates {
 			if semToken.PosModel().Binding != binding {
 				isBound = false
 				break
@@ -86,10 +86,10 @@ func (token *Token) IsBoundTo(binding Binding) bool {
 }
 
 func (token *Token) IsBoundToOneOf(bindings Bindings) bool {
-	ttype := token.ttype
+	ttype := token.Ttype
 	if ttype.PosModel().Equal(PosModUnset) {
 		isBound := false
-		for _, semToken := range token.semanticCandidates {
+		for _, semToken := range token.SemanticCandidates {
 			isBound = bindings.Contains(semToken.PosModel().Binding)
 			if !isBound {
 				break
@@ -101,13 +101,13 @@ func (token *Token) IsBoundToOneOf(bindings Bindings) bool {
 }
 
 // This function returns true if
-// - A (token ttype positional model is Unset) : all its semantic candidates return true for the provided candidatePredicate method
-// - B (token type positional model is not Unset) : the candidatePredicate method given token ttype returns true
+// - A (token Ttype positional model is Unset) : all its semantic candidates return true for the provided candidatePredicate method
+// - B (token type positional model is not Unset) : the candidatePredicate method given token Ttype returns true
 func tokenIsWithIndirection(token *Token, predicate func(TokenType) bool) bool {
-	ttype := token.ttype
+	ttype := token.Ttype
 	if ttype.PosModel().Equal(PosModUnset) {
 		isOption := false
-		for _, semToken := range token.semanticCandidates {
+		for _, semToken := range token.SemanticCandidates {
 			isOption = predicate(semToken)
 			if !isOption {
 				break
@@ -119,8 +119,8 @@ func tokenIsWithIndirection(token *Token, predicate func(TokenType) bool) bool {
 }
 
 // This function returns true if
-// - A (token ttype positional model is Unset) : all its semantic candidates are option parts
-// - B (token type positional model is not Unset) : token ttype is an option part
+// - A (token Ttype positional model is Unset) : all its semantic candidates are option parts
+// - B (token type positional model is not Unset) : token Ttype is an option part
 func (token *Token) IsOptionPart() bool {
 	isOptionPart := func(ttype TokenType) bool {
 		return ttype.PosModel().IsOptionPart
@@ -129,8 +129,8 @@ func (token *Token) IsOptionPart() bool {
 }
 
 // This function returns true if
-// - A (token ttype positional model is Unset) : all its semantic candidates are option flags
-// - B (token type positional model is not Unset) : token ttype is an option flag
+// - A (token Ttype positional model is Unset) : all its semantic candidates are option flags
+// - B (token type positional model is not Unset) : token Ttype is an option flag
 func (token *Token) IsOptionFlag() bool {
 	isOptionFlag := func(ttype TokenType) bool {
 		return ttype.PosModel().IsOptionFlag
@@ -139,7 +139,7 @@ func (token *Token) IsOptionFlag() bool {
 }
 
 func (token *Token) IsSemantic() bool {
-	return token.ttype.IsSemantic()
+	return token.Ttype.IsSemantic()
 }
 
 func (token *Token) IsContextFree() bool {
@@ -148,7 +148,7 @@ func (token *Token) IsContextFree() bool {
 
 func inferFromBoundRightLeftNeighbour(token *Token, leftNeighbour *Token) {
 	if leftNeighbour.IsBoundTo(BindRight) {
-		if semType, ok := leftNeighbour.ttype.(*SemanticTokenType); ok {
+		if semType, ok := leftNeighbour.Ttype.(*SemanticTokenType); ok {
 			token.setCandidate(semType.Variant().OptValueTokenType())
 		}
 	}
@@ -171,12 +171,12 @@ func inferFromBoundLeftOrNoneLeftNeighbour(token *Token, leftNeighbour *Token) {
 
 // This function will return the first non-end-of-options left neighbour if any
 func (token *Token) findLeftNeighbour() (neighbour *Token, found bool) {
-	position := token.argumentPosition
+	position := token.ArgumentPosition
 	leftNeighbourPos := position - 1
 	hasLeftNeighbour := leftNeighbourPos >= 0
 	if hasLeftNeighbour {
-		leftNeighbour := token.tokens[leftNeighbourPos]
-		if leftNeighbour.ttype == SemEndOfOptions {
+		leftNeighbour := token.Tokens[leftNeighbourPos]
+		if leftNeighbour.Ttype == SemEndOfOptions {
 			return leftNeighbour.findLeftNeighbour()
 		} else {
 			return leftNeighbour, true
@@ -187,7 +187,7 @@ func (token *Token) findLeftNeighbour() (neighbour *Token, found bool) {
 }
 
 func (token *Token) InferLeft() {
-	if _, ok := token.ttype.(*ContextFreeTokenType); ok {
+	if _, ok := token.Ttype.(*ContextFreeTokenType); ok {
 		leftNeighbour, hasLeftNeighbour := token.findLeftNeighbour()
 		if hasLeftNeighbour {
 			inferFromBoundLeftOrNoneLeftNeighbour(token, leftNeighbour)
@@ -208,12 +208,12 @@ func inferFromBoundRightOrNoneRightNeighbour(token *Token, rightNeighbour *Token
 
 // This function will return the first non-end-of-options right neighbour if any
 func (token *Token) findRightNeighbour() (neighbour *Token, found bool) {
-	position := token.argumentPosition
+	position := token.ArgumentPosition
 	rightNeighbourPos := position + 1
-	hasRightNeighbour := rightNeighbourPos < len(token.tokens)
+	hasRightNeighbour := rightNeighbourPos < len(token.Tokens)
 	if hasRightNeighbour {
-		rightNeighbour := token.tokens[rightNeighbourPos]
-		if rightNeighbour.ttype == SemEndOfOptions {
+		rightNeighbour := token.Tokens[rightNeighbourPos]
+		if rightNeighbour.Ttype == SemEndOfOptions {
 			return rightNeighbour.findRightNeighbour()
 		} else {
 			return rightNeighbour, true
@@ -224,7 +224,7 @@ func (token *Token) findRightNeighbour() (neighbour *Token, found bool) {
 }
 
 func (token *Token) InferRight() {
-	if _, ok := token.ttype.(*ContextFreeTokenType); ok {
+	if _, ok := token.Ttype.(*ContextFreeTokenType); ok {
 		rightNeighbour, hasRightNeighbour := token.findRightNeighbour()
 		if token.IsOptionPart() && hasRightNeighbour {
 			inferFromBoundRightOrNoneRightNeighbour(token, rightNeighbour)
@@ -233,8 +233,8 @@ func (token *Token) InferRight() {
 }
 
 func (token *Token) InferPositional() {
-	position := token.argumentPosition
-	if position == len(token.tokens)-1 {
+	position := token.ArgumentPosition
+	if position == len(token.Tokens)-1 {
 		if !token.IsOptionPart() {
 			token.setCandidate(SemOperand)
 		}
@@ -242,7 +242,7 @@ func (token *Token) InferPositional() {
 }
 
 func (token *Token) ReduceCandidatesWithScheme(scheme OptionScheme) {
-	candidates := token.semanticCandidates
+	candidates := token.SemanticCandidates
 	var newCandidates []*SemanticTokenType
 	for _, candidate := range candidates {
 		for _, testVariant := range scheme {
@@ -251,19 +251,19 @@ func (token *Token) ReduceCandidatesWithScheme(scheme OptionScheme) {
 			}
 		}
 	}
-	token.semanticCandidates = newCandidates
+	token.SemanticCandidates = newCandidates
 }
 
 func (token *Token) String() string {
-	semCandidateNames := make([]string, len(token.semanticCandidates))
-	for i, candidate := range token.semanticCandidates {
+	semCandidateNames := make([]string, len(token.SemanticCandidates))
+	for i, candidate := range token.SemanticCandidates {
 		semCandidateNames[i] = candidate.String()
 	}
 	return fmt.Sprintf(`{ 
 	pos:%v,
 	type:%v,
-	value:'%v',
-	boundTo:%v,
+	Value:'%v',
+	BoundTo:%v,
 	semCandidates:[%v]
-}`, token.argumentPosition, token.ttype, token.value, token.boundTo, strings.Join(semCandidateNames, ", "))
+}`, token.ArgumentPosition, token.Ttype, token.Value, token.BoundTo, strings.Join(semCandidateNames, ", "))
 }
