@@ -6,39 +6,36 @@ import (
 )
 
 var _ = Describe("OptDescription", func() {
-	Describe("Match method", func() {
+	Describe("MatchArgument method", func() {
 		When("provided with match models composed of switches", func() {
 			description := &OptDescription{
 				"execute",
 				MatchModels{
-					NewSimpleMatchModel(VariantPOSIXShortSwitch, "x"),
-					NewSimpleMatchModel(VariantGNUSwitch, "execute"),
-					NewSimpleMatchModel(VariantX2lktSwitch, "execute"),
+					NewStandaloneMatchModel(VariantPOSIXShortSwitch, "x"),
+					NewStandaloneMatchModel(VariantGNUSwitch, "execute"),
+					NewStandaloneMatchModel(VariantX2lktSwitch, "execute"),
 				},
 			}
 			It("should match GNU switch", func() {
-				Expect(description.Match("--execute")).To(ConsistOf(SemGNUSwitch))
+				Expect(description.MatchArgument("--execute")).To(ConsistOf(SemGNUSwitch))
 			})
 			It("should match x-toolkit switch", func() {
-				Expect(description.Match("-execute")).To(ConsistOf(SemX2lktSwitch))
+				Expect(description.MatchArgument("-execute")).To(ConsistOf(SemX2lktSwitch))
 			})
 			It("should match POSIX switch", func() {
-				Expect(description.Match("-x")).To(ConsistOf(SemPOSIXShortSwitch))
+				Expect(description.MatchArgument("-x")).To(ConsistOf(SemPOSIXShortSwitch))
 			})
 			It("should not match when no match model exists", func() {
-				Expect(description.Match("-e")).To(BeNil())
+				Expect(description.MatchArgument("-e")).To(BeNil())
 			})
 		})
 		When("provided with match models composed of switches and options assignments", func() {
-			description := &OptDescription{
-				"execute",
-				MatchModels{
-					NewSimpleMatchModel(VariantPOSIXShortAssignment, "x"),
-					NewSimpleMatchModel(VariantPOSIXShortSwitch, "x"),
-				},
-			}
+			description := NewOptDescription("execute",
+				NewStandaloneMatchModel(VariantPOSIXShortAssignment, "x"),
+				NewStandaloneMatchModel(VariantPOSIXShortSwitch, "x"),
+			)
 			It("should match multiple token types when they should both match", func() {
-				Expect(description.Match("-x")).To(ConsistOf(SemPOSIXShortAssignmentLeftSide, SemPOSIXShortSwitch))
+				Expect(description.MatchArgument("-x")).To(ConsistOf(SemPOSIXShortAssignmentLeftSide, SemPOSIXShortSwitch))
 			})
 		})
 	})

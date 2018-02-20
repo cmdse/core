@@ -2,6 +2,13 @@ package schema
 
 type Binding int
 
+var bindingNames = map[Binding]string{
+	BindUnknown: "UNKNOWN",
+	BindNone:    "NONE",
+	BindLeft:    "LEFT",
+	BindRight:   "RIGHT",
+}
+
 const (
 	BindUnknown Binding = iota
 	BindNone
@@ -10,16 +17,10 @@ const (
 )
 
 func (binding Binding) String() string {
-	switch binding {
-	case BindUnknown:
-		return "BindUnknown"
-	case BindNone:
-		return "BindNone"
-	case BindLeft:
-		return "BindLeft"
-	case BindRight:
-		return "BindRight"
-	default:
+	val, ok := bindingNames[binding]
+	if ok {
+		return val
+	} else {
 		return ""
 	}
 }

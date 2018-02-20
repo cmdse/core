@@ -16,7 +16,7 @@ var _ = Describe("SemanticTokenType model", func() {
 						Expect(sibling).ToNot(BeNil())
 						Expect(sibling.PosModel().Binding).To(Equal(BindLeft))
 					})
-					It("should be an option flag", func() {
+					It("should be an option flagName", func() {
 						Expect(ttype.PosModel().IsOptionFlag).To(BeTrue())
 					})
 				})
@@ -24,11 +24,11 @@ var _ = Describe("SemanticTokenType model", func() {
 			if ttype.PosModel().Binding == BindLeft {
 				Context("which is bound left", func() {
 					sibling := ttype.Variant().FlagTokenType()
-					It("should have a bound-right flag token type associated with its variant", func() {
+					It("should have a bound-right flagName token type associated with its variant", func() {
 						Expect(sibling).ToNot(BeNil())
 						Expect(sibling.PosModel().Binding).To(Equal(BindRight))
 					})
-					It("should not be an option flag", func() {
+					It("should not be an option flagName", func() {
 						Expect(ttype.PosModel().IsOptionFlag).To(BeFalse())
 					})
 					It("should be an option part", func() {

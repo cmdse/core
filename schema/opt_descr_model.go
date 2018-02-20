@@ -4,7 +4,7 @@ type OptDescriptionModel []*OptDescription
 
 func (model OptDescriptionModel) MatchArgument(arg string) []*SemanticTokenType {
 	for _, description := range model {
-		ttype := description.Match(arg)
+		ttype := description.MatchArgument(arg)
 		if ttype != nil {
 			return ttype
 		}

@@ -2,6 +2,7 @@ package argparse
 
 import (
 	"fmt"
+
 	. "github.com/cmdse/core/schema"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/ginkgo/extensions/table"
@@ -81,24 +82,9 @@ var _ = Describe("ParseArguments method", func() {
 				[]string{"-x", "-p", "optionValue", "-q", "arg1", "arg2"},
 				[]TokenType{SemPOSIXShortSwitch, SemPOSIXShortAssignmentLeftSide, SemPOSIXShortAssignmentValue, SemPOSIXShortSwitch, SemOperand, SemOperand},
 				OptDescriptionModel{
-					&OptDescription{
-						"execute",
-						[]*MatchModel{
-							NewSimpleMatchModel(VariantPOSIXShortSwitch, "x"),
-						},
-					},
-					&OptDescription{
-						"parse",
-						[]*MatchModel{
-							NewSimpleMatchModel(VariantPOSIXShortAssignment, "p"),
-						},
-					},
-					&OptDescription{
-						"query",
-						[]*MatchModel{
-							NewSimpleMatchModel(VariantPOSIXShortSwitch, "q"),
-						},
-					},
+					NewOptDescription("execute", NewStandaloneMatchModel(VariantPOSIXShortSwitch, "x")),
+					NewOptDescription("parse", NewStandaloneMatchModel(VariantPOSIXShortAssignment, "p")),
+					NewOptDescription("query", NewStandaloneMatchModel(VariantPOSIXShortSwitch, "q")),
 				},
 			),
 		)

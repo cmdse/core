@@ -23,7 +23,7 @@ func (tokenType *ContextFreeTokenType) Name() string {
 }
 
 func (tokenType *ContextFreeTokenType) String() string {
-	return tokenType.name
+	return tokenType.Name()
 }
 
 func (tokenType *ContextFreeTokenType) Equal(comparedTType TokenType) bool {

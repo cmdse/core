@@ -1,6 +1,9 @@
 package schema
 
-import "regexp"
+import (
+	"regexp"
+	"strings"
+)
 
 type OptExpressionVariant struct {
 	style              OptionStyle
@@ -24,16 +27,28 @@ func (optVariant *OptExpressionVariant) OptValueTokenType() *SemanticTokenType {
 	return optVariant.optValueTokenType
 }
 
-// Build a regex given a flag name and optional param
-// empty string stands for no param, or default matcher
-func (optVariant *OptExpressionVariant) Build(flag string, param string) *regexp.Regexp {
+func safeStringList(stringList []string) []string {
+	buffer := make([]string, len(stringList))
+	for i, str := range stringList {
+		buffer[i] = regexp.QuoteMeta(str)
+	}
+	return buffer
+}
+
+// Build a leftSideRegex given a flagName name and a list paramValues.
+// When paramValues is non-zero, it is evaluated as the concatenation of possible values a|b|c ... etc
+func (optVariant *OptExpressionVariant) Build(flagName string, paramList []string) *regexp.Regexp {
 	switch optVariant.assemblyModel.atype {
 	case AssmbTypeFlagStack, AssmbTypeFlag:
-		if param != "" {
-			panic("Cannot give a param argument when Assembly Type is 'Flag'")
+		if len(paramList) > 0 {
+			panic("Cannot give a paramList argument when Assembly Type is 'Flag'")
 		}
 	}
-	regex, err := optVariant.assemblyRegBuilder.Build(regexp.QuoteMeta(flag), param)
+	paramRegex := ""
+	if len(paramList) > 0 {
+		paramRegex = strings.Join(safeStringList(paramList), "|")
+	}
+	regex, err := optVariant.assemblyRegBuilder.Build(regexp.QuoteMeta(flagName), paramRegex)
 	if err != nil {
 		panic(err)
 	}

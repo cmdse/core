@@ -12,21 +12,21 @@ type ParametricRegexBuilder struct {
 	defaultParamMatch string
 }
 
-func (parRegex *ParametricRegexBuilder) assembleString(flag string, param string) (string, error) {
+func (parRegex *ParametricRegexBuilder) assembleString(flagName string, paramExpression string) (string, error) {
 	var fullExpr string
-	if flag == "" {
-		return "", errors.New("flag argument cannot be empty")
+	if flagName == "" {
+		return "", errors.New("flagName argument cannot be empty")
 	}
-	if param == "" {
-		fullExpr = fmt.Sprintf(parRegex.regexString, flag)
+	if paramExpression == "" {
+		fullExpr = fmt.Sprintf(parRegex.regexString, flagName)
 	} else {
-		fullExpr = fmt.Sprintf(parRegex.regexString, flag, param)
+		fullExpr = fmt.Sprintf(parRegex.regexString, flagName, paramExpression)
 	}
 	return fullExpr, nil
 }
 
-// Build a new regex from parameters flag and param
-// If param is empty string, defaults to defaultParamMatch
+// Build a new regex from parameters flagName and paramName
+// If paramName is empty string, defaults to defaultParamMatch
 func (parRegex *ParametricRegexBuilder) Build(flag string, param string) (*regexp.Regexp, error) {
 	resParam := param
 	if param == "" && parRegex.defaultParamMatch != "" {

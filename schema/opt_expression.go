@@ -1,8 +1,8 @@
 package schema
 
 type OptionDefinition struct {
-	flag            *string
-	assignmentValue *string
+	flag            string
+	assignmentValue string
 }
 
 type OptionExpression struct {
