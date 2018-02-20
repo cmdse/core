@@ -4,8 +4,8 @@ import (
 	"github.com/cmdse/core/argparse/tkn"
 )
 
-// Behavior for running argument parsing
-var ArgParseBehaviour = &Behavior{
+// ArgParseBehavior is a behavior specifically designed for argument parsing.
+var ArgParseBehavior = &Behavior{
 	RunInferences: func(p *Parser, token *tkn.Token) {
 		token.InferRight()
 		token.InferLeft()

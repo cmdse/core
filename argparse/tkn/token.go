@@ -7,8 +7,10 @@ import (
 	"github.com/cmdse/core/schema"
 )
 
-type candidatePredicate func(*schema.SemanticTokenType) bool
+// CandidatePredicate is a predicate given a schema.SemanticTokenType
+type CandidatePredicate func(*schema.SemanticTokenType) bool
 
+// Token is a dynamic value which hold information about the underlying argument's semantics
 type Token struct {
 	ArgumentPosition   int
 	Ttype              schema.TokenType
@@ -18,6 +20,8 @@ type Token struct {
 	SemanticCandidates []*schema.SemanticTokenType
 }
 
+// NewToken creates a new token. It ttype is context-free, its SemanticCandidates are assigned to a copy of
+// ttype's candidates.
 func NewToken(argumentPosition int, ttype schema.TokenType, value string, tokens TokenList) *Token {
 	var semanticCandidates []*schema.SemanticTokenType
 	if cfType, ok := ttype.(*schema.ContextFreeTokenType); ok {
@@ -35,21 +39,27 @@ func NewToken(argumentPosition int, ttype schema.TokenType, value string, tokens
 
 }
 
+// AttemptConvertToSemantic assign the only semantic type left in SemanticCandidates
+// if its length is 1, do nothing otherwise.
+// When such assignment happen, it will assign a bound value to its neighbour
+// depending on its positional model.
 func (token *Token) AttemptConvertToSemantic() {
 	if len(token.SemanticCandidates) == 1 {
 		var semanticType = token.SemanticCandidates[0]
 		token.Ttype = semanticType
 		if semanticType.PosModel().Binding == schema.BindRight {
-			token.BoundTo = token.Tokens[token.ArgumentPosition+1]
+			rightNeighbour, _ := token.findRightNeighbour()
+			token.BoundTo = rightNeighbour
 		}
 		if semanticType.PosModel().Binding == schema.BindLeft {
-			token.BoundTo = token.Tokens[token.ArgumentPosition-1]
+			leftNeighbour, _ := token.findLeftNeighbour()
+			token.BoundTo = leftNeighbour
 		}
 	}
 }
 
-// Remove candidates which don't satisfy to the given candidatePredicate
-func (token *Token) reduceCandidates(pred candidatePredicate) {
+// ReduceCandidates restrict semantic candidates to those which don't satisfy the given CandidatePredicate
+func (token *Token) ReduceCandidates(pred CandidatePredicate) {
 	newCandidates := make([]*schema.SemanticTokenType, 0, len(token.SemanticCandidates))
 	for _, candidate := range token.SemanticCandidates {
 		if pred(candidate) {
@@ -70,6 +80,7 @@ func (token *Token) setCandidates(tokenTypes []*schema.SemanticTokenType) {
 	token.AttemptConvertToSemantic()
 }
 
+// IsBoundTo returns true if the current token is bound to the given binding.
 func (token *Token) IsBoundTo(binding schema.Binding) bool {
 	ttype := token.Ttype
 	if ttype.PosModel().Equal(schema.PosModUnset) {
@@ -85,6 +96,11 @@ func (token *Token) IsBoundTo(binding schema.Binding) bool {
 	return ttype.PosModel().Binding == binding
 }
 
+// IsBoundToOneOf returns true
+// * when its positional model is unset, if all of its
+// semantic candidates' bindings are contained in the given bindings slice.
+// * when its positional model is not unset, if its positional model is contained
+// in the provided bindings slice.
 func (token *Token) IsBoundToOneOf(bindings schema.Bindings) bool {
 	ttype := token.Ttype
 	if ttype.PosModel().Equal(schema.PosModUnset) {
@@ -101,8 +117,8 @@ func (token *Token) IsBoundToOneOf(bindings schema.Bindings) bool {
 }
 
 // This function returns true if
-// - A (token Ttype positional model is Unset) : all its semantic candidates return true for the provided candidatePredicate method
-// - B (token type positional model is not Unset) : the candidatePredicate method given token Ttype returns true
+// - A (token Ttype positional model is Unset) : all its semantic candidates return true for the provided CandidatePredicate method
+// - B (token type positional model is not Unset) : the CandidatePredicate method given token Ttype returns true
 func tokenIsWithIndirection(token *Token, predicate func(schema.TokenType) bool) bool {
 	ttype := token.Ttype
 	if ttype.PosModel().Equal(schema.PosModUnset) {
@@ -118,9 +134,9 @@ func tokenIsWithIndirection(token *Token, predicate func(schema.TokenType) bool)
 	return predicate(ttype)
 }
 
-// This function returns true if
-// - A (token Ttype positional model is Unset) : all its semantic candidates are option parts
-// - B (token type positional model is not Unset) : token Ttype is an option part
+// IsOptionPart returns true if
+// * A (token Ttype positional model is Unset) : all its semantic candidates are option parts
+// * B (token type positional model is not Unset) : token Ttype is an option part
 func (token *Token) IsOptionPart() bool {
 	isOptionPart := func(ttype schema.TokenType) bool {
 		return ttype.PosModel().IsOptionPart
@@ -128,9 +144,9 @@ func (token *Token) IsOptionPart() bool {
 	return tokenIsWithIndirection(token, isOptionPart)
 }
 
-// This function returns true if
-// - A (token Ttype positional model is Unset) : all its semantic candidates are option flags
-// - B (token type positional model is not Unset) : token Ttype is an option flag
+// IsOptionFlag returns true if
+// * A (token Ttype positional model is Unset) : all its semantic candidates are option flags
+// * B (token type positional model is not Unset) : token Ttype is an option flag
 func (token *Token) IsOptionFlag() bool {
 	isOptionFlag := func(ttype schema.TokenType) bool {
 		return ttype.PosModel().IsOptionFlag
@@ -138,10 +154,12 @@ func (token *Token) IsOptionFlag() bool {
 	return tokenIsWithIndirection(token, isOptionFlag)
 }
 
+// IsSemantic return true if this token's type is of type schema.SemanticTokenType
 func (token *Token) IsSemantic() bool {
 	return token.Ttype.IsSemantic()
 }
 
+// IsContextFree return true if this token's type is of type schema.ContextFreeTokenType
 func (token *Token) IsContextFree() bool {
 	return !token.IsSemantic()
 }
@@ -162,7 +180,7 @@ func inferFromBoundLeftOrNoneLeftNeighbour(token *Token, leftNeighbour *Token) {
 			token.setCandidate(schema.SemOperand)
 		} else {
 			// Remove any bound to BindLeft
-			token.reduceCandidates(func(tokenType *schema.SemanticTokenType) bool {
+			token.ReduceCandidates(func(tokenType *schema.SemanticTokenType) bool {
 				return tokenType.PosModel().Binding != schema.BindLeft
 			})
 		}
@@ -178,14 +196,14 @@ func (token *Token) findLeftNeighbour() (neighbour *Token, found bool) {
 		leftNeighbour := token.Tokens[leftNeighbourPos]
 		if leftNeighbour.Ttype == schema.SemEndOfOptions {
 			return leftNeighbour.findLeftNeighbour()
-		} else {
-			return leftNeighbour, true
 		}
-	} else {
-		return nil, false
+		return leftNeighbour, true
 	}
+	return nil, false
 }
 
+// InferLeft will update semantic candidates given its left-neighbour properties.
+// If only one semantic candidate remains, the token's type will be assigned its value.
 func (token *Token) InferLeft() {
 	if _, ok := token.Ttype.(*schema.ContextFreeTokenType); ok {
 		leftNeighbour, hasLeftNeighbour := token.findLeftNeighbour()
@@ -200,7 +218,7 @@ func inferFromBoundRightOrNoneRightNeighbour(token *Token, rightNeighbour *Token
 	nbrBoundToRightOrNone := rightNeighbour.IsBoundToOneOf(schema.Bindings{schema.BindNone, schema.BindRight})
 	if nbrBoundToRightOrNone {
 		// Remove candidates which are bound to right
-		token.reduceCandidates(func(tokenType *schema.SemanticTokenType) bool {
+		token.ReduceCandidates(func(tokenType *schema.SemanticTokenType) bool {
 			return tokenType.PosModel().Binding != schema.BindRight
 		})
 	}
@@ -215,14 +233,14 @@ func (token *Token) findRightNeighbour() (neighbour *Token, found bool) {
 		rightNeighbour := token.Tokens[rightNeighbourPos]
 		if rightNeighbour.Ttype == schema.SemEndOfOptions {
 			return rightNeighbour.findRightNeighbour()
-		} else {
-			return rightNeighbour, true
 		}
-	} else {
-		return nil, false
+		return rightNeighbour, true
 	}
+	return nil, false
 }
 
+// InferRight will update semantic candidates given its right-neighbour properties.
+// If only one semantic candidate remains, the token's type will be assigned its value.
 func (token *Token) InferRight() {
 	if _, ok := token.Ttype.(*schema.ContextFreeTokenType); ok {
 		rightNeighbour, hasRightNeighbour := token.findRightNeighbour()
@@ -232,6 +250,7 @@ func (token *Token) InferRight() {
 	}
 }
 
+// InferPositional will turn the last token to a schema.SemOperand
 func (token *Token) InferPositional() {
 	position := token.ArgumentPosition
 	if position == len(token.Tokens)-1 {
@@ -241,6 +260,8 @@ func (token *Token) InferPositional() {
 	}
 }
 
+// ReduceCandidatesWithScheme will restrict the set of token's semantic candidates
+// to those which comply with the provided schema.OptionScheme.
 func (token *Token) ReduceCandidatesWithScheme(scheme schema.OptionScheme) {
 	candidates := token.SemanticCandidates
 	var newCandidates []*schema.SemanticTokenType

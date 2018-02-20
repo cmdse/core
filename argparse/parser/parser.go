@@ -5,6 +5,12 @@ import (
 	"github.com/cmdse/core/schema"
 )
 
+// A Parser is an entity capable of turning an list of context-free tokens
+// to a list of semantic tokens.
+//
+// See also
+//
+// * ParseTokens method
 type Parser struct {
 	*Behavior
 	pim                 *schema.ProgramInterfaceModel
@@ -28,13 +34,19 @@ func (p *Parser) onePass() {
 	}
 }
 
+// ParseTokens will turn an list of context-free tokens
+// to a list of semantic tokens, when possible.
+// The details of how it is done is encapsulated in the Behavior field.
+//
+// See also
+//
+// * Behavior
 func (p *Parser) ParseTokens() tkn.TokenList {
 	p.RunStaticChecks(p)
 	for {
 		p.onePass()
 		if !p.lastTwoLoopsResultInConversion() {
-			break
+			return p.tokens
 		}
 	}
-	return p.tokens
 }

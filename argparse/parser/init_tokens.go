@@ -22,6 +22,9 @@ func parseArgument(arg string) *schema.ContextFreeTokenType {
 	return fetchedType
 }
 
+// InitTokens turns a list of arguments to a TokenList.
+// It only infer an argument's semantic when the matched
+// ContextFreeTokenType has exactly one semantic candidate.
 func InitTokens(args []string) tkn.TokenList {
 	tokenList := make(tkn.TokenList, len(args))
 	for i, arg := range args {
