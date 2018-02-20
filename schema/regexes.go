@@ -82,7 +82,7 @@ var (
 		"",
 	}
 	RegBuilderOneDashWordAlphaNum = &ParametricRegexBuilder{
-		`^-(%s){2,}$`,
+		`^-(%s{2,})$`,
 		regexAlphaNumChar,
 		"",
 	}

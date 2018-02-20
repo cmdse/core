@@ -15,7 +15,7 @@ type OptExpressionVariant struct {
 	optValueTokenType *SemanticTokenType
 }
 
-func (optVariant *OptExpressionVariant) Assemble(expression OptionParts) *OptionExpression {
+func (optVariant *OptExpressionVariant) Assemble(expression OptionParts) (*OptionExpression, error) {
 	return optVariant.assemblyModel.Assemble(expression, optVariant.assemblyRegex)
 }
 
