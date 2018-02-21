@@ -37,6 +37,22 @@ var _ = Describe("OptDescription", func() {
 	newOptDescription := func(models ...*MatchModel) *OptDescription {
 		return NewOptDescription("", models...)
 	}
+	Describe("NewMatchModelFromDefinition function", func() {
+		When("given a definition", func() {
+			It("should return a corresponding MatchModel", func() {
+				matchModel := NewMatchModelFromDefinition(&OptionDefinition{
+					VariantX2lktExplicitAssignment,
+					"foo",
+					"bar",
+				})
+				Expect(matchModel.variant).To(Equal(VariantX2lktExplicitAssignment))
+				Expect(matchModel.flagName).To(Equal("foo"))
+				Expect(matchModel.paramName).To(Equal("bar"))
+				Expect(matchModel.leftSideRegex.MatchString("-foo=béhéhéhé")).To(BeTrue())
+				Expect(matchModel.leftSideRegex.MatchString("-foo=blahblah-blah")).To(BeTrue())
+			})
+		})
+	})
 	Describe("NewAssignmentMatchModel function", func() {
 		When("given a zero flagName", func() {
 			It("should panic", func() {

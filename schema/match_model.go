@@ -116,6 +116,21 @@ func NewAssignmentMatchModel(variant *OptExpressionVariant, flagName string, par
 	return matchModel
 }
 
+// NewMatchModelFromDefinition creates a MatchModel from an OptionDefinition
+func NewMatchModelFromDefinition(description *OptionDefinition) *MatchModel {
+	matchModel := &MatchModel{
+		"",
+		description.Variant(),
+		description.Flag(),
+		description.AssignmentValue(),
+		nil,
+		nil,
+	}
+	matchModel.build()
+	return matchModel
+
+}
+
 func extractPOSIXShortSwitchFlags(model OptDescriptionModel) []string {
 	posixShortSwitchModels := make([]string, 0, len(model))
 	for _, descr := range model {
