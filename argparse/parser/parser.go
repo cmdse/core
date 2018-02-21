@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"github.com/cmdse/core/argparse/tkn"
 	"github.com/cmdse/core/schema"
 )
 
@@ -14,9 +13,19 @@ import (
 type Parser struct {
 	*Behavior
 	pim                 *schema.ProgramInterfaceModel
-	tokens              tkn.TokenList
+	tokens              schema.TokenList
 	previousConversions int
 	conversions         int
+}
+
+// Tokens return the list of tokens being processed for parsing
+func (p *Parser) Tokens() schema.TokenList {
+	return p.tokens
+}
+
+// PIM return the schema.ProgramInterfaceModel associated with the parsed program's arguments
+func (p *Parser) PIM() *schema.ProgramInterfaceModel {
+	return p.pim
 }
 
 func (p *Parser) lastTwoLoopsResultInConversion() bool {
@@ -41,7 +50,7 @@ func (p *Parser) onePass() {
 // See also
 //
 // * Behavior
-func (p *Parser) ParseTokens() tkn.TokenList {
+func (p *Parser) ParseTokens() schema.TokenList {
 	p.RunStaticChecks(p)
 	for {
 		p.onePass()

@@ -7,5 +7,6 @@ type TokenType interface {
 	IsSemantic() bool
 	Name() string
 	Equal(TokenType) bool
+	Variant() *OptExpressionVariant
 	fmt.Stringer
 }

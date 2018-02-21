@@ -3,7 +3,7 @@ package schema
 type SemanticTokenType struct {
 	posModel *PositionalModel
 	name     string
-	// If is option part, the associated variant
+	// If is option part, the associated Variant
 	// nil otherwise
 	variant *OptExpressionVariant
 	style   OptionStyle

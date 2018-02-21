@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"github.com/cmdse/core/argparse/tkn"
 	"github.com/cmdse/core/schema"
 )
 
@@ -12,7 +11,7 @@ import (
 // * ArgParseBehavior for an example of implementing a behavior
 // * InitTokens to convert arguments into tokens
 // * ProgramInterfaceModel
-func NewParser(tokens tkn.TokenList, pim *schema.ProgramInterfaceModel, behaviour *Behavior) *Parser {
+func NewParser(tokens schema.TokenList, pim *schema.ProgramInterfaceModel, behaviour *Behavior) *Parser {
 	return &Parser{
 		behaviour,
 		pim,

@@ -1,36 +1,33 @@
 package schema
 
 import (
-	"regexp"
+	"fmt"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
-type optionParts struct {
-	args []string
-}
-
-func (op *optionParts) Args() []string {
-	return op.args
-}
-
-func newOptionParts(parts ...string) OptionParts {
-	return &optionParts{
-		parts,
+func newOptParts(variant *OptExpressionVariant, parts ...string) TokenList {
+	optionParts := TokenList{}
+	flag := NewToken(0, variant.flagTokenType, parts[0], optionParts)
+	optionParts = append(optionParts, flag)
+	if len(parts) > 1 {
+		value := NewToken(1, variant.optValueTokenType, parts[1], optionParts)
+		optionParts = append(optionParts, value)
 	}
+	return optionParts
 }
 
-func checkOneOpt(model *ExprAssemblyModel, expectedFlag string, expectedValue string, reg *regexp.Regexp, parts ...string) {
-	optionParts := newOptionParts(parts...)
-	optionExpression, err := model.Assemble(optionParts, reg)
+func testOneOpt(model *ExprAssemblyModel, expectedFlag string, expectedValue string, variant *OptExpressionVariant, parts ...string) {
+	optionParts := newOptParts(variant, parts...)
+	optionExpression, err := model.Assemble(optionParts, variant)
 	It("should not return an error", func() {
 		Expect(err).NotTo(HaveOccurred())
 	})
 	It("should return exactly 1 option expression", func() {
-		Expect(optionExpression.options).To(HaveLen(1))
+		Expect(optionExpression.options).To(HaveLen(1), fmt.Sprintf("%v", optionExpression))
 	})
-	It("the option expression should be composed of flag and value", func() {
+	It("its option expression should be composed of flag and value", func() {
 		opt := optionExpression.options[0]
 		Expect(opt.flag).To(Equal(expectedFlag))
 		Expect(opt.assignmentValue).To(Equal(expectedValue))
@@ -40,14 +37,14 @@ func checkOneOpt(model *ExprAssemblyModel, expectedFlag string, expectedValue st
 var _ = Describe("ExprAssemblyModel", func() {
 	Describe("AssmbModelSplit", func() {
 		When("given X-Toolkit explicit assignment regex", func() {
-			checkOneOpt(AssmbModelSplit, "option", "value", RegexX2lktExplicitAssignment, "-option=value")
+			testOneOpt(AssmbModelSplit, "option", "value", VariantX2lktExplicitAssignment, "-option=value")
 		})
 		When("given POSIX sticky value assignment regex", func() {
-			checkOneOpt(AssmbModelSplit, "p", "12", RegexPosixShortStickyValue, "-p12")
+			testOneOpt(AssmbModelSplit, "p", "12", VariantPOSIXShortStickyValue, "-p12")
 		})
 		When("given a wrong number of arguments", func() {
-			optionParts := newOptionParts("--opt=val", "unwantedarg")
-			_, err := AssmbModelSplit.Assemble(optionParts, RegexX2lktExplicitAssignment)
+			optionParts := newOptParts(VariantGNUExplicitAssignment, "--opt=val", "unwantedarg")
+			_, err := AssmbModelSplit.Assemble(optionParts, VariantGNUExplicitAssignment)
 			It("should return an error", func() {
 				Expect(err).To(HaveOccurred())
 			})
@@ -56,14 +53,14 @@ var _ = Describe("ExprAssemblyModel", func() {
 	})
 	Describe("AssmbModelGroup", func() {
 		When("given GNU implicit assignment regex", func() {
-			checkOneOpt(AssmbModelGroup, "foo", "bar", RegexTwoDashWord, "--foo", "bar")
+			testOneOpt(AssmbModelGroup, "foo", "bar", VariantGNUImplicitAssignment, "--foo", "bar")
 		})
 		When("given X-Toolkit implicit assignment regex", func() {
-			checkOneOpt(AssmbModelGroup, "foo", "bar", RegexOneDashWord, "-foo", "bar")
+			testOneOpt(AssmbModelGroup, "foo", "bar", VariantX2lktImplicitAssignment, "-foo", "bar")
 		})
 		When("given a regex matching an unexpected number of groups", func() {
-			optionParts := newOptionParts("--opt=val", "value")
-			_, err := AssmbModelSplit.Assemble(optionParts, RegexX2lktExplicitAssignment)
+			optionParts := newOptParts(VariantX2lktExplicitAssignment, "--opt=val", "value")
+			_, err := AssmbModelSplit.Assemble(optionParts, VariantX2lktExplicitAssignment)
 			It("should return an error", func() {
 				Expect(err).To(HaveOccurred())
 
@@ -72,16 +69,16 @@ var _ = Describe("ExprAssemblyModel", func() {
 	})
 	Describe("AssmbModelFlag", func() {
 		When("given GNU switch regex", func() {
-			checkOneOpt(AssmbModelFlag, "foo", "", RegexOneDashWord, "-foo")
+			testOneOpt(AssmbModelFlag, "foo", "", VariantGNUSwitch, "--foo")
 		})
 		When("given POSIX switch regex", func() {
-			checkOneOpt(AssmbModelFlag, "f", "", RegexOneDashLetter, "-f")
+			testOneOpt(AssmbModelFlag, "f", "", VariantPOSIXShortSwitch, "-f")
 		})
 	})
 	Describe("AssmbModelFlagStack", func() {
 		When("given GNU switch stack regex", func() {
-			optionParts := newOptionParts("-pqrst")
-			optionExpression, err := AssmbModelFlagStack.Assemble(optionParts, RegexOneDashWordAlphaNum)
+			optionParts := newOptParts(VariantPOSIXStackedShortSwitches, "-pqrst")
+			optionExpression, err := AssmbModelFlagStack.Assemble(optionParts, VariantPOSIXStackedShortSwitches)
 			It("should not return an error", func() {
 				Expect(err).NotTo(HaveOccurred())
 			})

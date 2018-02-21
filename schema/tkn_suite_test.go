@@ -1,4 +1,4 @@
-package tkn_test
+package schema
 
 import (
 	"testing"

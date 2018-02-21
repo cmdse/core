@@ -3,7 +3,6 @@ package schema
 import (
 	"errors"
 	"fmt"
-	"regexp"
 	"strings"
 )
 
@@ -15,6 +14,7 @@ const (
 	AssmbTypeGroup                             // tokens 2, options 1, assign left side to flagName, right side to value
 	AssmbTypeFlag                              // tokens 1, options 1, standalone flagName
 	AssmbTypeFlagStack                         // tokens 1, options n, split each letter to one AssmbTypeFlag
+	AssmbTypeNone                              // tokens 1, options 1
 )
 
 type OptionParts interface {
@@ -24,13 +24,14 @@ type OptionParts interface {
 // An implementation of the assembling mechanism to create option expressions from tokens
 type ExprAssemblyModel struct {
 	atype    ExprAssemblyType
-	Assemble func(OptionParts, *regexp.Regexp) (*OptionExpression, error)
+	Assemble func(TokenList, *OptExpressionVariant) (*OptionExpression, error)
 }
 
-func matchLeftSideArg(regex *regexp.Regexp, optionGroup OptionParts, expectedLen int, modelName string) ([]string, error) {
-	matchRes := regex.FindStringSubmatch(optionGroup.Args()[0])
+func matchLeftSideArg(variant *OptExpressionVariant, groupParts TokenList, expectedLen int, modelName string) ([]string, error) {
+	leftPart := groupParts[0].Value
+	matchRes := variant.assemblyRegex.FindStringSubmatch(leftPart)
 	if len(matchRes) == 0 {
-		return nil, fmt.Errorf("assembly model '%v' could not match leftSideRegex", modelName)
+		return nil, fmt.Errorf("variant '%v' could not match left part '%v' with assembly model %v", variant.Name(), leftPart, modelName)
 	}
 	matchRes = matchRes[1:]
 	if expectedLen != len(matchRes) {
@@ -45,16 +46,16 @@ var (
 	// nolint: dupl
 	AssmbModelSplit = &ExprAssemblyModel{
 		AssmbTypeSplit,
-		func(optionGroup OptionParts, leftSideRegex *regexp.Regexp) (*OptionExpression, error) {
-			args := optionGroup.Args()
-			if len(args) != 1 {
+		func(groupParts TokenList, variant *OptExpressionVariant) (*OptionExpression, error) {
+			if len(groupParts) != 1 {
 				return nil, errors.New("assembly model 'Split' needs exactly one argument")
 			}
-			groups, err := matchLeftSideArg(leftSideRegex, optionGroup, 2, "Split")
+			groups, err := matchLeftSideArg(variant, groupParts, 2, "Split")
 			if err != nil {
 				return nil, err
 			}
-			return NewOptionExpression(OptionDefinition{
+			return NewOptionExpression(&OptionDefinition{
+				variant,
 				groups[0],
 				groups[1],
 			}), nil
@@ -64,34 +65,34 @@ var (
 	// The leftmost the option flag, and the rightmost the option assignment value.
 	AssmbModelGroup = &ExprAssemblyModel{
 		AssmbTypeGroup,
-		func(optionGroup OptionParts, leftSideRegex *regexp.Regexp) (*OptionExpression, error) {
-			args := optionGroup.Args()
-			if len(args) != 2 {
+		func(groupParts TokenList, variant *OptExpressionVariant) (*OptionExpression, error) {
+			if len(groupParts) != 2 {
 				return nil, errors.New("assembly model 'Group' needs exactly two arguments")
 			}
-			groups, err := matchLeftSideArg(leftSideRegex, optionGroup, 1, "Group")
+			groups, err := matchLeftSideArg(variant, groupParts, 1, "Group")
 			if err != nil {
 				return nil, err
 			}
-			return NewOptionExpression(OptionDefinition{
+			return NewOptionExpression(&OptionDefinition{
+				variant,
 				groups[0],
-				args[1],
+				groupParts[1].Value,
 			}), nil
 		},
 	}
 	// Create an expression from one token, with no assignment value.
 	AssmbModelFlag = &ExprAssemblyModel{
 		AssmbTypeFlag,
-		func(optionGroup OptionParts, leftSideRegex *regexp.Regexp) (*OptionExpression, error) {
-			args := optionGroup.Args()
-			if len(args) != 1 {
-				return nil, errors.New("assembly model 'Flag' needs exactly one argument")
+		func(groupParts TokenList, variant *OptExpressionVariant) (*OptionExpression, error) {
+			if len(groupParts) != 1 {
+				return nil, errors.New("assembly model 'flag' needs exactly one argument")
 			}
-			groups, err := matchLeftSideArg(leftSideRegex, optionGroup, 1, "Flag")
+			groups, err := matchLeftSideArg(variant, groupParts, 1, "flag")
 			if err != nil {
 				return nil, err
 			}
-			return NewOptionExpression(OptionDefinition{
+			return NewOptionExpression(&OptionDefinition{
+				variant,
 				groups[0],
 				"",
 			}), nil
@@ -100,21 +101,29 @@ var (
 	// Create an expression mapping to multiple options from one token, with no assignment value.
 	AssmbModelFlagStack = &ExprAssemblyModel{
 		AssmbTypeFlagStack,
-		func(optionGroup OptionParts, leftSideRegex *regexp.Regexp) (*OptionExpression, error) {
-			args := optionGroup.Args()
-			if len(args) != 1 {
+		func(groupParts TokenList, variant *OptExpressionVariant) (*OptionExpression, error) {
+			if len(groupParts) != 1 {
 				return nil, errors.New("assembly model 'FlagStack' needs exactly one argument")
 			}
-			groups, err := matchLeftSideArg(leftSideRegex, optionGroup, 1, "FlagStack")
+			groups, err := matchLeftSideArg(variant, groupParts, 1, "FlagStack")
 			if err != nil {
 				return nil, err
 			}
 			flags := strings.Split(groups[0], "")
-			options := make([]OptionDefinition, len(flags))
+			options := make([]*OptionDefinition, len(flags))
 			for i := range flags {
-				options[i] = OptionDefinition{flags[i], ""}
+				options[i] = &OptionDefinition{variant, flags[i], ""}
 			}
 			return NewOptionExpression(options...), nil
+		},
+	}
+	AssmModelNone = &ExprAssemblyModel{
+		AssmbTypeNone,
+		func(groupParts TokenList, variant *OptExpressionVariant) (*OptionExpression, error) {
+			if len(groupParts) != 1 {
+				return nil, errors.New("assembly model 'TypeNone' needs exactly one argument")
+			}
+			return NewOptionExpression(&OptionDefinition{variant, "", ""}), nil
 		},
 	}
 )

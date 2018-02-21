@@ -3,15 +3,13 @@ package argparse
 import (
 	"fmt"
 
-	"github.com/cmdse/core/argparse/tkn"
-
 	. "github.com/cmdse/core/schema"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/ginkgo/extensions/table"
 	. "github.com/onsi/gomega"
 )
 
-func compareTokenArrays(tokens tkn.TokenList, types []TokenType, args []string) (bool, string) {
+func compareTokenArrays(tokens TokenList, types []TokenType, args []string) (bool, string) {
 	if len(types) != len(tokens) {
 		return false, fmt.Sprintf("token list and type list are not of the same length")
 	}

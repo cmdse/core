@@ -1,7 +1,6 @@
-package tkn
+package schema
 
 import (
-	. "github.com/cmdse/core/schema"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
