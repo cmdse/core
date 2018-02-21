@@ -1,7 +1,6 @@
 package argparse
 
 import (
-	"github.com/cmdse/core/argparse/parser"
 	"github.com/cmdse/core/schema"
 )
 
@@ -9,7 +8,7 @@ import (
 // Not all tokens are guaranteed to be semantic, and human control might be necessary
 // to assign the right semantic token type.
 func ParseArguments(args []string, pim *schema.ProgramInterfaceModel) schema.TokenList {
-	tokens := parser.InitTokens(args)
-	parser := parser.NewParser(tokens, pim, parser.ArgParseBehavior)
+	tokens := InitTokens(args)
+	parser := NewParser(tokens, pim, ArgParseBehavior)
 	return parser.ParseTokens()
 }

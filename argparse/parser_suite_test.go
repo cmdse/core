@@ -1,4 +1,4 @@
-package parser_test
+package argparse
 
 import (
 	"testing"

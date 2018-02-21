@@ -1,4 +1,4 @@
-package parser
+package argparse
 
 import (
 	"github.com/cmdse/core/schema"
