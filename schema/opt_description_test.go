@@ -17,16 +17,24 @@ var _ = Describe("OptDescription", func() {
 				},
 			}
 			It("should match GNU switch", func() {
-				Expect(description.MatchArgument("--execute")).To(ConsistOf(SemGNUSwitch))
+				matchedCandidates, matched := description.MatchArgument("--execute")
+				Expect(matched).To(BeTrue())
+				Expect(matchedCandidates).To(ConsistOf(SemGNUSwitch))
 			})
 			It("should match x-toolkit switch", func() {
-				Expect(description.MatchArgument("-execute")).To(ConsistOf(SemX2lktSwitch))
+				matchedCandidates, matched := description.MatchArgument("-execute")
+				Expect(matched).To(BeTrue())
+				Expect(matchedCandidates).To(ConsistOf(SemX2lktSwitch))
 			})
 			It("should match POSIX switch", func() {
-				Expect(description.MatchArgument("-x")).To(ConsistOf(SemPOSIXShortSwitch))
+				matchedCandidates, matched := description.MatchArgument("-x")
+				Expect(matched).To(BeTrue())
+				Expect(matchedCandidates).To(ConsistOf(SemPOSIXShortSwitch))
 			})
 			It("should not match when no match model exists", func() {
-				Expect(description.MatchArgument("-e")).To(BeNil())
+				matchedCandidates, matched := description.MatchArgument("-p")
+				Expect(matched).To(BeFalse())
+				Expect(matchedCandidates).To(HaveLen(0))
 			})
 		})
 		When("provided with match models composed of switches and options assignments", func() {
@@ -35,7 +43,9 @@ var _ = Describe("OptDescription", func() {
 				NewStandaloneMatchModel(VariantPOSIXShortSwitch, "x"),
 			)
 			It("should match multiple token types when they should both match", func() {
-				Expect(description.MatchArgument("-x")).To(ConsistOf(SemPOSIXShortAssignmentLeftSide, SemPOSIXShortSwitch))
+				matchedCandidates, matched := description.MatchArgument("-x")
+				Expect(matched).To(BeTrue())
+				Expect(matchedCandidates).To(ConsistOf(SemPOSIXShortAssignmentLeftSide, SemPOSIXShortSwitch))
 			})
 		})
 	})

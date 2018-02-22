@@ -2,14 +2,14 @@ package schema
 
 type OptDescriptionModel []*OptDescription
 
-func (model OptDescriptionModel) MatchArgument(arg string) []*SemanticTokenType {
+func (model OptDescriptionModel) MatchArgument(arg string) ([]*SemanticTokenType, bool) {
 	for _, description := range model {
-		ttype := description.MatchArgument(arg)
-		if ttype != nil {
-			return ttype
+		ttype, matched := description.MatchArgument(arg)
+		if matched {
+			return ttype, true
 		}
 	}
-	return nil
+	return nil, false
 }
 
 func (model OptDescriptionModel) Variants() []*OptExpressionVariant {

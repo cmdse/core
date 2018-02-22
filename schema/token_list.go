@@ -58,8 +58,8 @@ func contextFreeAndOptionFlag(token *Token) bool {
 func (tokens TokenList) MatchOptionDescription(descriptionModel OptDescriptionModel) {
 	if descriptionModel != nil {
 		for _, token := range tokens.When(contextFreeAndOptionFlag) {
-			types := descriptionModel.MatchArgument(token.Value)
-			if types != nil {
+			types, matched := descriptionModel.MatchArgument(token.Value)
+			if matched {
 				token.setCandidates(types)
 			}
 		}

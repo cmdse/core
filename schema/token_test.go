@@ -156,4 +156,24 @@ var _ = Describe("Token", func() {
 			Expect(tokens.MapToTypes()).To(ConsistOf(CfEndOfOptions, SemX2lktExplicitAssignment))
 		})
 	})
+	Describe("ReduceCandidatesWithScheme method", func() {
+		When("given a CfWord", func() {
+			token := NewToken(0, CfWord, "foo", nil)
+			token.ReduceCandidatesWithScheme(OptSchemeXToolkitStrict)
+			It("should keep semantic candidates", func() {
+				Expect(token.SemanticCandidates).To(ContainElement(SemOperand))
+			})
+			It("should keep only value candidates conforming to the scheme", func() {
+				Expect(token.SemanticCandidates).To(ConsistOf(SemOperand, SemX2lktImplicitAssignmentValue))
+			})
+		})
+		When("given a flag Context-Free token", func() {
+			token := NewToken(0, CfOneDashWordAlphaNum, "-foo", nil)
+			token.ReduceCandidatesWithScheme(OptSchemeXToolkitStrict)
+			It("should keep only flag candidates conforming to the scheme", func() {
+				Expect(token.SemanticCandidates).To(ConsistOf(SemX2lktSwitch, SemX2lktImplicitAssignmentLeftSide))
+			})
+		})
+	})
+
 })

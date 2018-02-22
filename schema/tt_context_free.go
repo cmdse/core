@@ -5,7 +5,7 @@ import (
 )
 
 type ContextFreeTokenType struct {
-	SemanticCandidates []*SemanticTokenType
+	semanticCandidates []*SemanticTokenType
 	regexp             *regexp.Regexp
 	name               string
 }
@@ -34,6 +34,13 @@ func (tokenType *ContextFreeTokenType) Equal(comparedTType TokenType) bool {
 	return tokenType.Name() == comparedTType.Name()
 }
 
+// SemanticCandidates returns a copy of inner semanticCandidates field.
+func (tokenType *ContextFreeTokenType) SemanticCandidates() []*SemanticTokenType {
+	var semanticCandidates = make([]*SemanticTokenType, len(tokenType.semanticCandidates))
+	copy(semanticCandidates, tokenType.semanticCandidates)
+	return semanticCandidates
+}
+
 func (tokenType *ContextFreeTokenType) Regexp() (*regexp.Regexp, bool) {
 	reg := tokenType.regexp
 	isMatchAllRegex := reg == nil
@@ -42,35 +49,35 @@ func (tokenType *ContextFreeTokenType) Regexp() (*regexp.Regexp, bool) {
 
 var (
 	CfGnuExplicitAssignment = &ContextFreeTokenType{
-		SemanticCandidates: []*SemanticTokenType{
+		semanticCandidates: []*SemanticTokenType{
 			SemGNUExplicitAssignment,
 		},
 		regexp: RegexGnuExplicitAssignment,
 		name:   "CfGnuExplicitAssignment",
 	}
 	CfX2lktExplicitAssignment = &ContextFreeTokenType{
-		SemanticCandidates: []*SemanticTokenType{
+		semanticCandidates: []*SemanticTokenType{
 			SemX2lktExplicitAssignment,
 		},
 		regexp: RegexX2lktExplicitAssignment,
 		name:   "CfX2lktExplicitAssignment",
 	}
 	CfX2lktReverseSwitch = &ContextFreeTokenType{
-		SemanticCandidates: []*SemanticTokenType{
+		semanticCandidates: []*SemanticTokenType{
 			SemX2lktReverseSwitch,
 		},
 		regexp: RegexX2lktReverseSwitch,
 		name:   "CfX2lktReverseSwitch",
 	}
 	CfEndOfOptions = &ContextFreeTokenType{
-		SemanticCandidates: []*SemanticTokenType{
+		semanticCandidates: []*SemanticTokenType{
 			SemEndOfOptions,
 		},
 		regexp: RegexEndOfOptions,
 		name:   "CfEndOfOptions",
 	}
 	CfOneDashLetter = &ContextFreeTokenType{
-		SemanticCandidates: []*SemanticTokenType{
+		semanticCandidates: []*SemanticTokenType{
 			SemPOSIXShortAssignmentLeftSide,
 			SemPOSIXShortSwitch,
 		},
@@ -78,14 +85,14 @@ var (
 		name:   "CfOneDashLetter",
 	}
 	CfPosixShortStickyValue = &ContextFreeTokenType{
-		SemanticCandidates: []*SemanticTokenType{
+		semanticCandidates: []*SemanticTokenType{
 			SemPOSIXShortStickyValue,
 		},
 		regexp: RegexPosixShortStickyValue,
 		name:   "CfPosixShortStickyValue",
 	}
 	CfOneDashWordAlphaNum = &ContextFreeTokenType{
-		SemanticCandidates: []*SemanticTokenType{
+		semanticCandidates: []*SemanticTokenType{
 			SemPOSIXStackedShortSwitches,
 			SemX2lktSwitch,
 			SemX2lktImplicitAssignmentLeftSide,
@@ -94,7 +101,7 @@ var (
 		name:   "CfOneDashWordAlphaNum",
 	}
 	CfOneDashWord = &ContextFreeTokenType{
-		SemanticCandidates: []*SemanticTokenType{
+		semanticCandidates: []*SemanticTokenType{
 			SemX2lktSwitch,
 			SemX2lktImplicitAssignmentLeftSide,
 		},
@@ -102,7 +109,7 @@ var (
 		name:   "CfOneDashWord",
 	}
 	CfTwoDashWord = &ContextFreeTokenType{
-		SemanticCandidates: []*SemanticTokenType{
+		semanticCandidates: []*SemanticTokenType{
 			SemGNUSwitch,
 			SemGNUImplicitAssignmentLeftSide,
 		},
@@ -110,7 +117,7 @@ var (
 		name:   "CfTwoDashWord",
 	}
 	CfOptWord = &ContextFreeTokenType{
-		SemanticCandidates: []*SemanticTokenType{
+		semanticCandidates: []*SemanticTokenType{
 			SemOperand,
 			SemPOSIXShortAssignmentValue,
 			SemGNUImplicitAssignmentValue,
@@ -121,7 +128,7 @@ var (
 		name:   "CfOptWord",
 	}
 	CfWord = &ContextFreeTokenType{
-		SemanticCandidates: []*SemanticTokenType{
+		semanticCandidates: []*SemanticTokenType{
 			SemOperand,
 			SemPOSIXShortAssignmentValue,
 			SemGNUImplicitAssignmentValue,

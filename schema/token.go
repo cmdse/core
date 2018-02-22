@@ -40,9 +40,7 @@ func (token *Token) initTtype(ttype TokenType) {
 	token.Ttype = ttype
 	if cfType, ok := ttype.(*ContextFreeTokenType); ok {
 		// copy semantic candidates from token type
-		var semanticCandidates = make([]*SemanticTokenType, len(cfType.SemanticCandidates))
-		copy(semanticCandidates, cfType.SemanticCandidates)
-		token.SemanticCandidates = semanticCandidates
+		token.SemanticCandidates = cfType.SemanticCandidates()
 	}
 }
 
@@ -304,13 +302,21 @@ func (token *Token) InferPositional() {
 func (token *Token) ReduceCandidatesWithScheme(scheme OptionScheme) {
 	candidates := token.SemanticCandidates
 	var newCandidates []*SemanticTokenType
+
+nextcandidate:
 	for _, candidate := range candidates {
-		for _, testVariant := range scheme {
-			if testVariant == candidate.Variant() || !candidate.PosModel().IsOptionFlag {
+		for _, schemeVariant := range scheme {
+			if schemeVariant == candidate.Variant() {
 				newCandidates = append(newCandidates, candidate)
+				continue nextcandidate
 			}
 		}
+		if !candidate.PosModel().IsOptionPart {
+			newCandidates = append(newCandidates, candidate)
+		}
+
 	}
+
 	token.SemanticCandidates = newCandidates
 }
 

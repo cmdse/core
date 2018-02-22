@@ -79,17 +79,17 @@ var _ = Describe("ParseArguments method", func() {
 			}
 			Expect(equal).To(BeTrue(), err)
 		},
-		PEntry("should handle properly when provided with XToolkitStrict option scheme",
+		Entry("should handle properly when provided with XToolkitStrict option scheme",
 			[]string{"-option", "-long-option", "--", "-arg", "--arg2", "argument"},
 			[]TokenType{SemX2lktSwitch, CfOneDashWord, SemEndOfOptions, CfWord, SemOperand, SemOperand},
 			OptSchemeXToolkitStrict,
-			[]int{0, 2, 0, 4, 0, 0},
+			[]int{0, 2, 0, 2, 0, 0},
 		),
-		PEntry("should handle properly when provided with POSIXStrict option scheme",
+		Entry("should handle properly when provided with POSIXStrict option scheme",
 			[]string{"-xlf", "-p", "optionValue", "-q", "arg1", "arg2"},
 			[]TokenType{SemPOSIXStackedShortSwitches, CfOneDashLetter, CfOptWord, CfOneDashLetter, CfOptWord, SemOperand},
 			OptionSchemePOSIXStrict,
-			[]int{0, 2, 3, 2, 3, 0},
+			[]int{0, 2, 2, 2, 2, 0},
 		),
 	)
 	DescribeTable("when provided with program description model",

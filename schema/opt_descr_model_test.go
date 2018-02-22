@@ -13,9 +13,12 @@ var _ = Describe("OptDescriptionModel", func() {
 	}
 	Describe("MatchArgument method", func() {
 		It("should match when one of the option description matches", func() {
-			Expect(model.MatchArgument("-x")).To(ConsistOf(VariantPOSIXShortSwitch.flagTokenType))
-			Expect(model.MatchArgument("-q")).To(ConsistOf(VariantPOSIXShortSwitch.flagTokenType))
-			Expect(model.MatchArgument("-p")).To(ConsistOf(VariantPOSIXShortAssignment.flagTokenType))
+			candidates1, _ := model.MatchArgument("-x")
+			candidates2, _ := model.MatchArgument("-q")
+			candidates3, _ := model.MatchArgument("-p")
+			Expect(candidates1).To(ConsistOf(VariantPOSIXShortSwitch.flagTokenType))
+			Expect(candidates2).To(ConsistOf(VariantPOSIXShortSwitch.flagTokenType))
+			Expect(candidates3).To(ConsistOf(VariantPOSIXShortAssignment.flagTokenType))
 		})
 		It("should not match when none of the option description matches", func() {
 			Expect(model.MatchArgument("-no-match")).To(HaveLen(0))
