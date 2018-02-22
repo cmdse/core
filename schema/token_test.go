@@ -49,6 +49,18 @@ var _ = Describe("Token", func() {
 				})
 			})
 		})
+		When("token is context-free and has no semantic candidates", func() {
+			var tokens TokenList
+			var tokenType TokenType = CfTwoDashWord
+			token := NewToken(0, tokenType, "--option", tokens)
+			token.SemanticCandidates = nil
+			Context("and provided bindings are 'None' and 'Left'", func() {
+				boundToNoneOrLeft := token.IsBoundToOneOf(Bindings{BindNone, BindLeft})
+				It("should return false", func() {
+					Expect(boundToNoneOrLeft).To(BeFalse())
+				})
+			})
+		})
 
 	})
 	Describe("IsBoundTo method", func() {
@@ -84,6 +96,18 @@ var _ = Describe("Token", func() {
 				})
 			})
 
+		})
+		When("token type is context free and token has no semantic candidates", func() {
+			var tokens TokenList
+			var tokenType TokenType = CfTwoDashWord
+			token := NewToken(0, tokenType, "-option", tokens)
+			token.SemanticCandidates = nil
+			Context("and provided bindings are 'None' and 'Left'", func() {
+				boundToNoneOrLeft := token.IsBoundTo(BindNone)
+				It("should return false", func() {
+					Expect(boundToNoneOrLeft).To(BeFalse())
+				})
+			})
 		})
 	})
 	Describe("IsOptionPart method", func() {

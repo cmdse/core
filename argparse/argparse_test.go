@@ -46,7 +46,11 @@ var _ = Describe("ParseArguments method", func() {
 			),
 			Entry("should handle end-of-options special switch",
 				[]string{"-option", "-long-option", "--", "-arg", "--arg2", "argument"},
-				[]TokenType{CfOneDashWordAlphaNum, CfOneDashWord, SemEndOfOptions, CfOneDashWordAlphaNum, SemOperand, SemOperand},
+				[]TokenType{CfOneDashWordAlphaNum, CfOneDashWord, SemEndOfOptions, CfWord, SemOperand, SemOperand},
+			),
+			Entry("should handle end-of-options special switch at last pos",
+				[]string{"-option", "-long-option", "--"},
+				[]TokenType{CfOneDashWordAlphaNum, SemX2lktSwitch, SemEndOfOptions},
 			),
 		)
 	})
@@ -56,11 +60,17 @@ var _ = Describe("ParseArguments method", func() {
 				pim := NewProgramInterfaceModel(scheme, nil)
 				tokens := ParseArguments(vararg, pim)
 				equal, err := compareTokenArrays(tokens, expected, vararg)
+				// Expect SemanticCandidates length of context-free tokens > 0
+				for _, token := range tokens.WhenContextFree() {
+					if _, ok := token.Ttype.(*ContextFreeTokenType); ok {
+						Expect(len(token.SemanticCandidates)).To(BeNumerically(">", 0))
+					}
+				}
 				Expect(equal).To(BeTrue(), err)
 			},
 			Entry("should handle properly when provided with XToolkitStrict option scheme",
 				[]string{"-option", "-long-option", "--", "-arg", "--arg2", "argument"},
-				[]TokenType{SemX2lktSwitch, CfOneDashWord, SemEndOfOptions, CfOneDashWordAlphaNum, SemOperand, SemOperand},
+				[]TokenType{SemX2lktSwitch, CfOneDashWord, SemEndOfOptions, CfWord, SemOperand, SemOperand},
 				OptSchemeXToolkitStrict,
 			),
 			Entry("should handle properly when provided with POSIXStrict option scheme",

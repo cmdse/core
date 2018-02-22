@@ -30,7 +30,11 @@ func isOperandOrOptAssignmentValue(stt *SemanticTokenType) bool {
 func inferFromEndOfOptions(position int, tokens TokenList) {
 	// The first token right after end-of-option could be an option assignment Value,
 	// so we don't treat it as an operand
-	tokens[position+1].ReduceCandidates(isOperandOrOptAssignmentValue)
+	positionAfterEOO := position + 1
+	if positionAfterEOO < len(tokens) {
+		tokens[positionAfterEOO].initTtype(CfWord)
+		tokens[positionAfterEOO].ReduceCandidates(isOperandOrOptAssignmentValue)
+	}
 	// The Tokens after end-of-option must be operands
 	for rightIndex := position + 2; rightIndex < len(tokens); rightIndex++ {
 		(tokens)[rightIndex].setCandidate(SemOperand)

@@ -3,6 +3,8 @@ package schema
 import (
 	"fmt"
 	"strings"
+
+	"github.com/onsi/ginkgo"
 )
 
 // CandidatePredicate is a predicate given a SemanticTokenType
@@ -21,20 +23,27 @@ type Token struct {
 // NewToken creates a new token. It ttype is context-free, its SemanticCandidates are assigned to a copy of
 // ttype's candidates.
 func NewToken(argumentPosition int, ttype TokenType, value string, tokens TokenList) *Token {
-	var semanticCandidates []*SemanticTokenType
-	if cfType, ok := ttype.(*ContextFreeTokenType); ok {
-		semanticCandidates = make([]*SemanticTokenType, len(cfType.SemanticCandidates))
-		copy(semanticCandidates, cfType.SemanticCandidates)
-	}
-	return &Token{
+	token := &Token{
 		argumentPosition,
-		ttype,
+		nil,
 		value,
 		nil,
 		tokens,
-		semanticCandidates,
+		nil,
 	}
+	token.initTtype(ttype)
+	return token
+}
 
+// initTtype sets token's type and, if ContextFree, copy semantic candidates to the named field
+func (token *Token) initTtype(ttype TokenType) {
+	token.Ttype = ttype
+	if cfType, ok := ttype.(*ContextFreeTokenType); ok {
+		// copy semantic candidates from token type
+		var semanticCandidates = make([]*SemanticTokenType, len(cfType.SemanticCandidates))
+		copy(semanticCandidates, cfType.SemanticCandidates)
+		token.SemanticCandidates = semanticCandidates
+	}
 }
 
 // AttemptConvertToSemantic assign the only semantic type left in SemanticCandidates
@@ -82,7 +91,7 @@ func (token *Token) setCandidates(tokenTypes []*SemanticTokenType) {
 func (token *Token) IsBoundTo(binding Binding) bool {
 	ttype := token.Ttype
 	if ttype.PosModel().Equal(PosModUnset) {
-		isBound := true
+		isBound := len(token.SemanticCandidates) > 0
 		for _, semToken := range token.SemanticCandidates {
 			if semToken.PosModel().Binding != binding {
 				isBound = false
@@ -102,7 +111,7 @@ func (token *Token) IsBoundTo(binding Binding) bool {
 func (token *Token) IsBoundToOneOf(bindings Bindings) bool {
 	ttype := token.Ttype
 	if ttype.PosModel().Equal(PosModUnset) {
-		isBound := false
+		isBound := len(token.SemanticCandidates) > 0
 		for _, semToken := range token.SemanticCandidates {
 			isBound = bindings.Contains(semToken.PosModel().Binding)
 			if !isBound {
@@ -162,6 +171,18 @@ func (token *Token) IsContextFree() bool {
 	return !token.IsSemantic()
 }
 
+func omitBoundToLeftCandidates(tokenType *SemanticTokenType) bool {
+	return tokenType.PosModel().Binding != BindLeft
+}
+
+func omitBoundToRightCandidates(tokenType *SemanticTokenType) bool {
+	return tokenType.PosModel().Binding != BindRight
+}
+
+func keepBoundToRightCandidates(tokenType *SemanticTokenType) bool {
+	return tokenType.PosModel().Binding == BindRight
+}
+
 func inferFromBoundRightNeighbourAtLeft(token *Token, leftNeighbour *Token) {
 	if leftNeighbour.IsBoundTo(BindRight) {
 		if semType, ok := leftNeighbour.Ttype.(*SemanticTokenType); ok {
@@ -178,11 +199,13 @@ func inferFromBoundLeftOrNoneNeighbourAtLeft(token *Token, leftNeighbour *Token)
 			token.setCandidate(SemOperand)
 		} else {
 			// Remove any bound to BindLeft
-			token.ReduceCandidates(func(tokenType *SemanticTokenType) bool {
-				return tokenType.PosModel().Binding != BindLeft
-			})
+			token.ReduceCandidates(omitBoundToLeftCandidates)
 		}
 	}
+}
+
+func inferFromNoNeighborAtLeft(token *Token) {
+	token.ReduceCandidates(omitBoundToLeftCandidates)
 }
 
 // This function will return the first non-end-of-options left neighbour if any
@@ -196,6 +219,8 @@ func (token *Token) findLeftNeighbour() (neighbour *Token, found bool) {
 			return leftNeighbour.findLeftNeighbour()
 		}
 		return leftNeighbour, true
+	} else {
+		inferFromNoNeighborAtLeft(token)
 	}
 	return nil, false
 }
@@ -216,10 +241,12 @@ func inferFromBoundRightOrNoneNeighbourAtRight(token *Token, rightNeighbour *Tok
 	nbrBoundToRightOrNone := rightNeighbour.IsBoundToOneOf(Bindings{BindNone, BindRight})
 	if nbrBoundToRightOrNone {
 		// Remove candidates which are bound to right
-		token.ReduceCandidates(func(tokenType *SemanticTokenType) bool {
-			return tokenType.PosModel().Binding != BindRight
-		})
+		token.ReduceCandidates(omitBoundToRightCandidates)
 	}
+}
+
+func inferFromNoNeighborAtRight(token *Token) {
+	token.ReduceCandidates(omitBoundToRightCandidates)
 }
 
 // This function will return the first non-end-of-options right neighbour if any
@@ -229,7 +256,7 @@ func (token *Token) findRightNeighbour() (neighbour *Token, found bool) {
 	hasRightNeighbour := rightNeighbourPos < len(token.Tokens)
 	if hasRightNeighbour {
 		rightNeighbour := token.Tokens[rightNeighbourPos]
-		if rightNeighbour.Ttype == SemEndOfOptions {
+		if rightNeighbour.Ttype.Equal(SemEndOfOptions) {
 			return rightNeighbour.findRightNeighbour()
 		}
 		return rightNeighbour, true
@@ -246,14 +273,18 @@ func (token *Token) InferRight() {
 			inferFromBoundRightOrNoneNeighbourAtRight(token, rightNeighbour)
 			inferFromBoundLeftNeighbourAtRight(token, rightNeighbour)
 		}
+		if token.IsOptionFlag() && !hasRightNeighbour {
+			inferFromNoNeighborAtRight(token)
+		}
 	}
 }
+
 func inferFromBoundLeftNeighbourAtRight(token *Token, rightNeighbour *Token) {
 	if rightNeighbour.IsBoundTo(BindLeft) {
-		// Remove candidates which are not bound to right
-		token.ReduceCandidates(func(tokenType *SemanticTokenType) bool {
-			return tokenType.PosModel().Binding == BindRight
-		})
+		// Keep candidates bound to right
+		fmt.Fprintf(ginkgo.GinkgoWriter, "%v\n", rightNeighbour)
+		fmt.Fprintf(ginkgo.GinkgoWriter, "%v\n", rightNeighbour.SemanticCandidates)
+		token.ReduceCandidates(keepBoundToRightCandidates)
 	}
 }
 
