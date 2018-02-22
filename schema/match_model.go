@@ -16,19 +16,39 @@ import (
 //
 //
 type MatchModel struct {
-	description   string
-	variant       *OptExpressionVariant
-	flagName      string
-	paramName     string
-	paramValues   []string
-	leftSideRegex *regexp.Regexp
+	description        string
+	variant            *OptExpressionVariant
+	flagName           string
+	paramName          string
+	paramAllowedValues []string
+	leftSideRegex      *regexp.Regexp
 }
 
 // A slice of MatchModel
 type MatchModels []*MatchModel
 
 func (matchModel *MatchModel) build() {
-	matchModel.leftSideRegex = matchModel.variant.Build(matchModel.flagName, matchModel.paramValues)
+	matchModel.leftSideRegex = matchModel.variant.Build(matchModel.flagName, matchModel.paramAllowedValues)
+}
+
+func (matchModel *MatchModel) Variant() *OptExpressionVariant {
+	return matchModel.variant
+}
+
+func (matchModel *MatchModel) FlagName() string {
+	return matchModel.flagName
+}
+
+func (matchModel *MatchModel) ParamName() string {
+	return matchModel.paramName
+}
+
+func (matchModel *MatchModel) ParamAllowedValues() []string {
+	return matchModel.paramAllowedValues
+}
+
+func (matchModel *MatchModel) LeftSideRegex() *regexp.Regexp {
+	return matchModel.leftSideRegex
 }
 
 // MatchLeftSide matches the left side of an option expression against it's model.

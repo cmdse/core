@@ -50,8 +50,8 @@ func safeStringList(stringList []string) []string {
 	return buffer
 }
 
-// Build a leftSideRegex given a flagName name and a list paramValues.
-// When paramValues is non-zero, it is evaluated as the concatenation of possible values a|b|c ... etc
+// Build a leftSideRegex given a flagName name and a list paramAllowedValues.
+// When paramAllowedValues is non-zero, it is evaluated as the concatenation of possible values a|b|c ... etc
 func (optVariant *OptExpressionVariant) Build(flagName string, paramList []string) *regexp.Regexp {
 	switch optVariant.assemblyModel.atype {
 	case AssmbTypeFlagStack, AssmbTypeFlag:
