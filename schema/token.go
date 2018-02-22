@@ -62,6 +62,7 @@ func (token *Token) AttemptConvertToSemantic() {
 			leftNeighbour, _ := token.findLeftNeighbour()
 			token.BoundTo = leftNeighbour
 		}
+		token.SemanticCandidates = nil
 	}
 }
 
