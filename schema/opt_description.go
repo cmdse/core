@@ -17,6 +17,19 @@ func (optDescription *OptDescription) MatchArgument(arg string) ([]*SemanticToke
 	return matches, len(matches) > 0
 }
 
+// Variants returns the option expression variants supported by its match models
+func (optDescription *OptDescription) Variants() []*OptExpressionVariant {
+	variantMap := map[*OptExpressionVariant]bool{}
+	variants := make([]*OptExpressionVariant, 0, 10)
+	for _, matchModel := range optDescription.MatchModels {
+		if _, ok := variantMap[matchModel.variant]; !ok {
+			variantMap[matchModel.variant] = true
+			variants = append(variants, matchModel.variant)
+		}
+	}
+	return variants
+}
+
 // Initialize an OptDescription ; assign description address to matchModels' description field.
 func NewOptDescription(description string, matchModels ...*MatchModel) *OptDescription {
 	for _, desc := range matchModels {
