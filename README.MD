@@ -1,3 +1,5 @@
+![](https://cdn.rawgit.com/cmdse/cmdse-logo/66c2ae92/cmdse.ico.svg)
+
 # CMDSE - Core
 
 [![GoDoc](https://godoc.org/github.com/cmdse/core?status.svg)](https://godoc.org/github.com/cmdse/core)
