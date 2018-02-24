@@ -3,8 +3,6 @@ package schema
 import (
 	"fmt"
 	"strings"
-
-	"github.com/onsi/ginkgo"
 )
 
 // CandidatePredicate is a predicate given a SemanticTokenType
@@ -281,8 +279,6 @@ func (token *Token) InferRight() {
 func inferFromBoundLeftNeighbourAtRight(token *Token, rightNeighbour *Token) {
 	if rightNeighbour.IsBoundTo(BindLeft) {
 		// Keep candidates bound to right
-		fmt.Fprintf(ginkgo.GinkgoWriter, "%v\n", rightNeighbour)
-		fmt.Fprintf(ginkgo.GinkgoWriter, "%v\n", rightNeighbour.SemanticCandidates)
 		token.ReduceCandidates(keepBoundToRightCandidates)
 	}
 }
