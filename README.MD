@@ -1,4 +1,4 @@
-![](https://cdn.rawgit.com/cmdse/cmdse-logo/66c2ae92/cmdse.ico.svg)
+[![](https://cdn.rawgit.com/cmdse/cmdse-logo/66c2ae92/cmdse.ico.svg)](https://github.com/cmdse)
 
 # CMDSE - Core
 
